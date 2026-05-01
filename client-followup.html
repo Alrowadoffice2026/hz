@@ -83,6 +83,8 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 14px;
+            width: 100%;
+            margin-bottom: 20px;
         }
 
         .btn-action:hover {
@@ -175,23 +177,25 @@
 
     <button class="btn-action" onclick="addObligation()">إضافة التزام جديد</button>
 
-    <table>
-        <thead>
-            <tr>
-                <th>اسم العميل</th>
-                <th>الكيان</th>
-                <th>رقم الضريبي</th>
-                <th>انتهاء السجل</th>
-                <th>الالتزام</th>
-                <th>الإجراء</th>
-            </tr>
-        </thead>
-        <tbody id="followupTableBody">
-            <tr>
-                <td colspan="6" style="color: #a0aec0;">لا توجد التزامات مسجلة حالياً</td>
-            </tr>
-        </tbody>
-    </table>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>اسم العميل</th>
+                    <th>الكيان</th>
+                    <th>رقم الضريبي</th>
+                    <th>انتهاء السجل</th>
+                    <th>الالتزام</th>
+                    <th>الإجراء</th>
+                </tr>
+            </thead>
+            <tbody id="followupTableBody">
+                <tr>
+                    <td colspan="6" style="color: #a0aec0;">لا توجد التزامات مسجلة حالياً</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <a href="dashboard-all.html" class="nav-link">العودة للوحة التحكم الرئيسية 🏠</a>
 </div>
@@ -244,7 +248,7 @@
         tableBody.appendChild(newRow);
         alert('تم إضافة التزام جديد بنجاح!');
         
-        // إعادة تعيين الفورم
+        // إعادة تعيين الحقول
         document.getElementById('legalEntity').value = '';
         document.getElementById('taxNumber').value = '';
         document.getElementById('commercialExpiry').value = '';
