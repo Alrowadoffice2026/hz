@@ -11,6 +11,7 @@
             --bg-color: #f8f9fa;
             --text-color: #2d3748;
             --border-color: #cbd5e1;
+            --success-color: #22543d;
         }
 
         body {
@@ -58,7 +59,20 @@
             color: var(--primary-color);
         }
 
-        /* تنسيق زر الإضافة السريعة */
+        /* تنسيق قسم الاستيراد الشامل لليوزرات */
+        .import-card {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px dashed var(--secondary-color);
+        }
+
+        .import-card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
         .add-client-card {
             background: #edf2f7;
             padding: 20px;
@@ -129,6 +143,20 @@
         .btn-action:hover {
             background-color: var(--primary-color);
         }
+
+        .btn-secondary {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-secondary:hover {
+            background-color: #1a202c;
+        }
     </style>
 </head>
 <body>
@@ -139,11 +167,27 @@
     <div class="stats-row">
         <div class="stat-card">
             <div>الشركات المسجلة</div>
-            <div class="stat-number">12</div>
+            <div class="stat-number" id="companyCount">12</div>
         </div>
         <div class="stat-card">
             <div>الطلبات المعلقة</div>
             <div class="stat-number">1</div>
+        </div>
+    </div>
+
+    <div class="import-card">
+        <h3>استيراد بيانات يوزرات العملاء من ملف إكسيل (CSV)</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="excelFileInput">اختر ملف CSV:</label>
+                <input type="file" id="excelFileInput" accept=".csv" style="padding: 5px;">
+            </div>
+            <div class="form-group" style="display: flex; align-items: flex-end;">
+                <button type="button" class="btn-secondary" onclick="importUsersFromCsv()">استيراد المستخدمين</button>
+            </div>
+        </div>
+        <div style="font-size: 11px; color: #4a5568;">
+            * يجب أن يكون الملف بصيغة CSV ويحتوي على الأعمدة بالترتيب: (اسم العميل، رقم الهاتف، اسم المستخدم/البريد الإلكتروني، كلمة المرور).
         </div>
     </div>
 
@@ -163,7 +207,7 @@
                 <input type="email" id="clientUsername" placeholder="email@company.com" required>
             </div>
             <div class="form-group">
-                <label for="clientPassword">كلمة المرور المؤقتة:</label>
+                <label for="clientPassword">كلمة المرور:</label>
                 <input type="text" id="clientPassword" value="Rowad@2026" required>
             </div>
         </div>
@@ -176,6 +220,7 @@
                 <th>اسم العميل</th>
                 <th>رقم الهاتف</th>
                 <th>اسم المستخدم</th>
+                <th>كلمة المرور</th>
                 <th>التاريخ</th>
                 <th>الإجراءات</th>
             </tr>
@@ -185,9 +230,10 @@
                 <td>أحمد محمد</td>
                 <td>01234567890</td>
                 <td>ahmed@rowad.com</td>
+                <td>Rowad@2026</td>
                 <td>2026-05-01</td>
                 <td>
-                    <button class="btn-action" onclick="alert('تم نسخ البيانات أو إرسالها للعميل.')">إرسال</button>
+                    <button class="btn-action" onclick="alert('تم إرسال بيانات الدخول للعميل.')">إرسال</button>
                 </td>
             </tr>
         </tbody>
@@ -195,30 +241,31 @@
 </div>
 
 <script>
+    let clientsData = [
+        { name: "أحمد محمد", phone: "01234567890", username: "ahmed@rowad.com", password: "Rowad@2026", date: "2026-05-01" }
+    ];
+
     function addAndGenerate() {
         const name = document.getElementById('clientName').value;
         const phone = document.getElementById('clientPhone').value;
         const username = document.getElementById('clientUsername').value;
+        const password = document.getElementById('clientPassword').value;
         
-        if (!name || !phone || !username) {
+        if (!name || !phone || !username || !password) {
             alert('يرجى ملء جميع الحقول المطلوبة.');
             return;
         }
 
-        const tableBody = document.getElementById('clientsTableBody');
-        const newRow = document.createElement('tr');
-        
-        newRow.innerHTML = `
-            <td>${name}</td>
-            <td>${phone}</td>
-            <td>${username}</td>
-            <td>${new Date().toISOString().split('T')[0]}</td>
-            <td>
-                <button class="btn-action" onclick="alert('تم إرسال بيانات الدخول للعميل.')">إرسال</button>
-            </td>
-        `;
-        
-        tableBody.appendChild(newRow);
+        const newClient = {
+            name: name,
+            phone: phone,
+            username: username,
+            password: password,
+            date: new Date().toISOString().split('T')[0]
+        };
+
+        clientsData.push(newClient);
+        renderTable();
         
         alert('تم إضافة العميل وتوليد بيانات الدخول بنجاح!');
         
@@ -226,6 +273,74 @@
         document.getElementById('clientName').value = '';
         document.getElementById('clientPhone').value = '';
         document.getElementById('clientUsername').value = '';
+        document.getElementById('clientPassword').value = 'Rowad@2026';
+    }
+
+    function renderTable() {
+        const tableBody = document.getElementById('clientsTableBody');
+        tableBody.innerHTML = '';
+        
+        clientsData.forEach((client) => {
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${client.name}</td>
+                    <td>${client.phone}</td>
+                    <td>${client.username}</td>
+                    <td>${client.password}</td>
+                    <td>${client.date}</td>
+                    <td>
+                        <button class="btn-action" onclick="alert('تم إرسال بيانات الدخول للعميل.')">إرسال</button>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        document.getElementById('companyCount').innerText = clientsData.length;
+    }
+
+    function importUsersFromCsv() {
+        const fileInput = document.getElementById('excelFileInput');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('يرجى اختيار ملف CSV أولاً.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const lines = text.split('\n');
+
+            let importedCount = 0;
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+
+                const cols = lines[i].split(',');
+                if (cols.length >= 4) { // 4 أعمدة (الاسم، الهاتف، اسم المستخدم، كلمة المرور)
+                    const newClient = {
+                        name: cols[0].trim(),
+                        phone: cols[1].trim(),
+                        username: cols[2].trim(),
+                        password: cols[3].trim(),
+                        date: new Date().toISOString().split('T')[0]
+                    };
+                    clientsData.push(newClient);
+                    importedCount++;
+                }
+            }
+
+            if (importedCount > 0) {
+                renderTable();
+                alert(`تم استيراد ${importedCount} مستخدم بنجاح!`);
+            } else {
+                alert('عذراً، لم يتم العثور على بيانات صالحة. يرجى التأكد من التنسيق.');
+            }
+            
+            fileInput.value = '';
+        };
+        
+        reader.readAsText(file);
     }
 </script>
 
