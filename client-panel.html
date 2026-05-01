@@ -30,7 +30,7 @@
             min-height: 100vh;
         }
 
-        /* شاشة تسجيل الدخول للعميل */
+        /* شاشة تسجيل الدخول */
         #clientLoginScreen {
             display: flex;
             align-items: center;
@@ -115,7 +115,7 @@
         #clientDashboard {
             display: none;
             padding: 40px 20px;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -153,9 +153,23 @@
             margin-bottom: 15px;
         }
 
+        /* شريط البحث */
+        .search-box {
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        /* الجدول الخاص بالمستندات */
         .table-responsive {
             overflow-x: auto;
-            max-height: 450px;
+            max-height: 400px;
             overflow-y: auto;
             margin-top: 15px;
         }
@@ -168,7 +182,7 @@
 
         th, td {
             border: 1px solid var(--border-color);
-            padding: 12px;
+            padding: 10px;
             font-size: 13px;
         }
 
@@ -180,7 +194,7 @@
         .btn-action {
             background-color: var(--secondary-color);
             color: white;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 4px;
             text-decoration: none;
             font-weight: bold;
@@ -192,6 +206,14 @@
 
         .btn-action:hover {
             background-color: var(--primary-color);
+        }
+
+        .btn-view {
+            background-color: #3182ce;
+        }
+
+        .btn-view:hover {
+            background-color: #2b6cb0;
         }
 
         .logout-btn {
@@ -229,7 +251,7 @@
                 <input type="password" id="clientPass" placeholder="أدخل كلمة المرور">
             </div>
             <button class="login-btn" onclick="loginClient()">دخول</button>
-            <div id="loginError">بيانات الدخول غير صحيحة أو لا توجد مستندات مسجلة للعميل.</div>
+            <div id="loginError">بيانات الدخول غير صحيحة.</div>
         </div>
     </div>
 
@@ -240,15 +262,18 @@
         </div>
 
         <div class="section-card">
-            <h3>📄 المستندات الخاصة بالشركة</h3>
+            <h3>📄 المستندات ونماذج التأسيس الخاصة بك</h3>
+            
+            <div class="search-box">
+                <input type="text" id="docSearchInput" placeholder="بحث باسم المستند..." onkeyup="searchClientDocs()">
+            </div>
+
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>عنوان الملف / الوصف</th>
-                            <th>نوع المستند</th>
-                            <th>تاريخ الرفع</th>
-                            <th>الملفات</th>
+                            <th>عنوان المستند / اسم الملف</th>
+                            <th>التاريخ</th>
                             <th>الإجراءات</th>
                         </tr>
                     </thead>
@@ -259,21 +284,21 @@
         </div>
 
         <div class="section-card">
-            <h3>📁 الملفات العامة والمشتركة</h3>
+            <h3>📁 الملفات العامة والمشتركة (للاطلاع فقط)</h3>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>اسم الملف / الدليل</th>
                             <th>الصلاحية</th>
-                            <th>الإجراء</th>
+                            <th>الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><strong>دليل الإرشادات المحاسبية والضريبية</strong></td>
                             <td><span style="color:#22543d; font-weight:bold; background:#c6f6d5; padding:3px 6px; border-radius:4px;">مرئي للجميع</span></td>
-                            <td><button class="btn-action" onclick="alert('جارٍ استعراض دليل الإرشادات.')">استعراض 👁️</button></td>
+                            <td><button class="btn-action" onclick="alert('ملف الإرشادات العامة للمكتب جاهز للاستعراض')">استعراض 👁️</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -284,6 +309,8 @@
     </div>
 
     <script>
+        let currentClientDocs = [];
+
         function loginClient() {
             const user = document.getElementById('clientUser').value.trim();
             const pass = document.getElementById('clientPass').value.trim();
@@ -303,30 +330,44 @@
         }
 
         function loadClientDocs(clientName) {
+            const savedDocs = JSON.parse(localStorage.getItem('officeDocs')) || [];
+            
+            // جلب كافة المستندات الخاصة بالعميل مع إزالة أي مسافات زائدة
+            currentClientDocs = savedDocs.filter(d => d.client.trim() === clientName.trim());
+            
+            renderDocsTable(currentClientDocs);
+        }
+
+        function renderDocsTable(data) {
             const tableBody = document.getElementById('clientDocTableBody');
             tableBody.innerHTML = '';
 
-            // قراءة كافة المستندات المرفوعة من شاشة الإدارة admin-docs
-            const savedDocs = JSON.parse(localStorage.getItem('officeDocs')) || [];
-            
-            // جلب ملفات العميل الحالي تلقائياً بناءً على اسمه
-            const clientDocs = savedDocs.filter(d => d.client.trim() === clientName.trim());
-
-            if (clientDocs.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" style="color:#718096; padding:15px;">لا توجد ملفات مرفوعة لشركتك حتى الآن.</td></tr>`;
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" style="color:#718096; padding:15px;">لا توجد ملفات مرفوعة لشركتك حتى الآن في هذا النظام.</td></tr>`;
             } else {
-                clientDocs.forEach(doc => {
-                    tableBody.innerHTML += `
-                        <tr>
-                            <td><strong>${doc.title}</strong></td>
-                            <td><span style="background:#ebf8ff; color:#2b6cb0; padding:3px 6px; border-radius:4px;">${doc.type}</span></td>
-                            <td>${doc.date}</td>
-                            <td>${doc.files}</td>
-                            <td><button class="btn-action" onclick="alert('تم تجهيز الملف (${doc.files}) للتحميل والتأكيد.')">تحميل 📥</button></td>
-                        </tr>
-                    `;
+                data.forEach((doc) => {
+                    const filesArray = doc.files.split(',').map(f => f.trim());
+                    
+                    filesArray.forEach((file) => {
+                        tableBody.innerHTML += `
+                            <tr>
+                                <td><strong>${doc.title}</strong> - <span style="font-size:11px; color:#4a5568">${file}</span></td>
+                                <td>${doc.date}</td>
+                                <td>
+                                    <button class="btn-action btn-view" onclick="alert('تم الاستعراض الآمن للملف: ${file}')">استعراض 👁️</button>
+                                    <button class="btn-action" onclick="alert('جارٍ تجهيز الملف للتحميل: ${file}')">تحميل 📥</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
                 });
             }
+        }
+
+        function searchClientDocs() {
+            const input = document.getElementById('docSearchInput').value.toLowerCase();
+            const filtered = currentClientDocs.filter(d => d.title.toLowerCase().includes(input));
+            renderDocsTable(filtered);
         }
 
         function logoutClient() {
