@@ -12,6 +12,8 @@
             --text-color: #2d3748;
             --border-color: #cbd5e1;
             --success-color: #22543d;
+            --danger-color: #c53030;
+            --accent-color: #3182ce;
         }
 
         body {
@@ -23,7 +25,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1150px;
             margin: 0 auto;
             background: #fff;
             padding: 30px;
@@ -59,7 +61,6 @@
             color: var(--primary-color);
         }
 
-        /* تنسيق قسم الاستيراد الشامل لليوزرات */
         .import-card {
             background: #edf2f7;
             padding: 20px;
@@ -122,7 +123,7 @@
         th, td {
             border: 1px solid var(--border-color);
             padding: 12px;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         th {
@@ -134,10 +135,11 @@
             background-color: var(--secondary-color);
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 6px 10px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+            margin: 2px;
         }
 
         .btn-action:hover {
@@ -157,6 +159,62 @@
         .btn-secondary:hover {
             background-color: #1a202c;
         }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 2px;
+        }
+
+        .btn-danger:hover {
+            background-color: #9b2c2c;
+        }
+
+        .btn-send {
+            background-color: #48bb78;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-send:hover {
+            background-color: #2f855a;
+        }
+
+        .nav-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-clear {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .btn-clear:hover {
+            background-color: #cbd5e1;
+        }
     </style>
 </head>
 <body>
@@ -167,11 +225,11 @@
     <div class="stats-row">
         <div class="stat-card">
             <div>الشركات المسجلة</div>
-            <div class="stat-number" id="companyCount">12</div>
+            <div class="stat-number" id="companyCount">0</div>
         </div>
         <div class="stat-card">
             <div>الطلبات المعلقة</div>
-            <div class="stat-number">1</div>
+            <div class="stat-number">0</div>
         </div>
     </div>
 
@@ -187,12 +245,13 @@
             </div>
         </div>
         <div style="font-size: 11px; color: #4a5568;">
-            * يجب أن يكون الملف بصيغة CSV ويحتوي على الأعمدة بالترتيب: (اسم العميل، رقم الهاتف، اسم المستخدم/البريد الإلكتروني، كلمة المرور).
+            * هيدر الملف: (اسم العميل، رقم الهاتف، اسم المستخدم/البريد الإلكتروني، كلمة المرور).
         </div>
     </div>
 
     <div class="add-client-card">
-        <h3>تسجيل عميل جديد وتوليد بيانات الدخول</h3>
+        <h3 id="formTitle">تسجيل عميل جديد وتوليد بيانات الدخول</h3>
+        <input type="hidden" id="editIndex" value="-1">
         <div class="form-row">
             <div class="form-group">
                 <label for="clientName">اسم المؤسس / العميل:</label>
@@ -211,7 +270,8 @@
                 <input type="text" id="clientPassword" value="Rowad@2026" required>
             </div>
         </div>
-        <button class="btn-action" onclick="addAndGenerate()">إضافة وتوليد بيانات الدخول</button>
+        <button class="btn-secondary" id="submitBtn" onclick="addAndGenerate()">إضافة وتوليد بيانات الدخول</button>
+        <button class="btn-clear" onclick="clearAllData()">تفريغ البيانات بالكامل 🗑️</button>
     </div>
 
     <table>
@@ -226,26 +286,26 @@
             </tr>
         </thead>
         <tbody id="clientsTableBody">
-            <tr>
-                <td>أحمد محمد</td>
-                <td>01234567890</td>
-                <td>ahmed@rowad.com</td>
-                <td>Rowad@2026</td>
-                <td>2026-05-01</td>
-                <td>
-                    <button class="btn-action" onclick="alert('تم إرسال بيانات الدخول للعميل.')">إرسال</button>
-                </td>
-            </tr>
-        </tbody>
+            </tbody>
     </table>
+
+    <a href="index.html" class="nav-link">العودة للوحة التحكم الرئيسية 🏠</a>
 </div>
 
 <script>
-    let clientsData = [
-        { name: "أحمد محمد", phone: "01234567890", username: "ahmed@rowad.com", password: "Rowad@2026", date: "2026-05-01" }
-    ];
+    // تفعيل التخزين الدائم لبيانات العملاء في المتصفح (LocalStorage)
+    let clientsData = JSON.parse(localStorage.getItem('rowadClients')) || [];
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderTable();
+    });
+
+    function saveToLocalStorage() {
+        localStorage.setItem('rowadClients', JSON.stringify(clientsData));
+    }
 
     function addAndGenerate() {
+        const editIndex = parseInt(document.getElementById('editIndex').value);
         const name = document.getElementById('clientName').value;
         const phone = document.getElementById('clientPhone').value;
         const username = document.getElementById('clientUsername').value;
@@ -256,44 +316,126 @@
             return;
         }
 
-        const newClient = {
-            name: name,
-            phone: phone,
-            username: username,
-            password: password,
-            date: new Date().toISOString().split('T')[0]
-        };
+        if (editIndex === -1) {
+            // التحقق من عدم التكرار
+            const exists = clientsData.some(c => c.username === username);
+            if (exists) {
+                alert('هذا المستخدم (اسم المستخدم) مسجل بالفعل!');
+                return;
+            }
 
-        clientsData.push(newClient);
+            const newClient = {
+                name: name,
+                phone: phone,
+                username: username,
+                password: password,
+                date: new Date().toISOString().split('T')[0]
+            };
+            clientsData.push(newClient);
+            alert('تم إضافة العميل بنجاح!');
+        } else {
+            // تعديل عميل موجود
+            clientsData[editIndex] = {
+                name: name,
+                phone: phone,
+                username: username,
+                password: password,
+                date: clientsData[editIndex].date
+            };
+            document.getElementById('editIndex').value = -1;
+            document.getElementById('submitBtn').innerText = 'إضافة وتوليد بيانات الدخول';
+            document.getElementById('formTitle').innerText = 'تسجيل عميل جديد وتوليد بيانات الدخول';
+            alert('تم تعديل بيانات العميل بنجاح!');
+        }
+
+        saveToLocalStorage();
         renderTable();
+        resetForm();
+    }
+
+    function editRecord(index) {
+        const client = clientsData[index];
         
-        alert('تم إضافة العميل وتوليد بيانات الدخول بنجاح!');
-        
-        // إعادة تعيين الحقول
+        document.getElementById('editIndex').value = index;
+        document.getElementById('clientName').value = client.name;
+        document.getElementById('clientPhone').value = client.phone;
+        document.getElementById('clientUsername').value = client.username;
+        document.getElementById('clientPassword').value = client.password;
+
+        document.getElementById('submitBtn').innerText = 'تعديل بيانات العميل';
+        document.getElementById('formTitle').innerText = 'تعديل بيانات العميل';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteRecord(index) {
+        if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
+            clientsData.splice(index, 1);
+            saveToLocalStorage();
+            renderTable();
+        }
+    }
+
+    function clearAllData() {
+        if (confirm('هل أنت متأكد من تفريغ جميع بيانات العملاء؟ لا يمكن التراجع عن هذا الإجراء.')) {
+            clientsData = [];
+            saveToLocalStorage();
+            renderTable();
+            alert('تم تفريغ البيانات بنجاح.');
+        }
+    }
+
+    function sendCredentials(index) {
+        const client = clientsData[index];
+        let phone = client.phone;
+        if (phone.startsWith('0')) {
+            phone = '2' + phone;
+        }
+
+        const platformLink = "https://your-username.github.io/repository-name/";
+        const message = `مرحباً ${client.name}،%0A` +
+                        `تم إنشاء حسابكم على منصة مكتب الرواد للخدمات المحاسبية.%0A` +
+                        `اسم المستخدم: ${client.username}%0A` +
+                        `كلمة المرور: ${client.password}%0A` +
+                        `رابط الدخول: ${platformLink}`;
+
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${message}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    function resetForm() {
         document.getElementById('clientName').value = '';
         document.getElementById('clientPhone').value = '';
         document.getElementById('clientUsername').value = '';
         document.getElementById('clientPassword').value = 'Rowad@2026';
+        document.getElementById('editIndex').value = "-1";
+        document.getElementById('submitBtn').innerText = 'إضافة وتوليد بيانات الدخول';
+        document.getElementById('formTitle').innerText = 'تسجيل عميل جديد وتوليد بيانات الدخول';
     }
 
     function renderTable() {
         const tableBody = document.getElementById('clientsTableBody');
         tableBody.innerHTML = '';
         
-        clientsData.forEach((client) => {
-            tableBody.innerHTML += `
-                <tr>
-                    <td>${client.name}</td>
-                    <td>${client.phone}</td>
-                    <td>${client.username}</td>
-                    <td>${client.password}</td>
-                    <td>${client.date}</td>
-                    <td>
-                        <button class="btn-action" onclick="alert('تم إرسال بيانات الدخول للعميل.')">إرسال</button>
-                    </td>
-                </tr>
-            `;
-        });
+        if (clientsData.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="6" style="padding:20px; color:#718096;">لا توجد بيانات مسجلة حالياً.</td></tr>`;
+        } else {
+            clientsData.forEach((client, index) => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><strong>${client.name}</strong></td>
+                        <td>${client.phone}</td>
+                        <td>${client.username}</td>
+                        <td>${client.password}</td>
+                        <td>${client.date}</td>
+                        <td>
+                            <button class="btn-action" onclick="editRecord(${index})">تعديل</button>
+                            <button class="btn-danger" onclick="deleteRecord(${index})">حذف</button>
+                            <button class="btn-send" onclick="sendCredentials(${index})">إرسال لـ العميل</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
         
         document.getElementById('companyCount').innerText = clientsData.length;
     }
@@ -317,24 +459,29 @@
                 if (!lines[i].trim()) continue;
 
                 const cols = lines[i].split(',');
-                if (cols.length >= 4) { // 4 أعمدة (الاسم، الهاتف، اسم المستخدم، كلمة المرور)
-                    const newClient = {
-                        name: cols[0].trim(),
-                        phone: cols[1].trim(),
-                        username: cols[2].trim(),
-                        password: cols[3].trim(),
-                        date: new Date().toISOString().split('T')[0]
-                    };
-                    clientsData.push(newClient);
-                    importedCount++;
+                if (cols.length >= 4) {
+                    const username = cols[2].trim();
+                    const exists = clientsData.some(c => c.username === username);
+                    if (!exists) {
+                        const newClient = {
+                            name: cols[0].trim(),
+                            phone: cols[1].trim(),
+                            username: username,
+                            password: cols[3].trim(),
+                            date: new Date().toISOString().split('T')[0]
+                        };
+                        clientsData.push(newClient);
+                        importedCount++;
+                    }
                 }
             }
 
             if (importedCount > 0) {
+                saveToLocalStorage();
                 renderTable();
                 alert(`تم استيراد ${importedCount} مستخدم بنجاح!`);
             } else {
-                alert('عذراً، لم يتم العثور على بيانات صالحة. يرجى التأكد من التنسيق.');
+                alert('عذراً، لم يتم العثور على بيانات صالحة أو أن البيانات مكررة بالفعل.');
             }
             
             fileInput.value = '';
