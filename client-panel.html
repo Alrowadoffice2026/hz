@@ -238,7 +238,7 @@
             <ul class="file-list">
                 <li class="file-item">
                     <span>دليل الإرشادات المحاسبية والضريبية</span>
-                    <a href="#" onclick="alert('ملف محمي - سيتم عرضه في نافذة آمنة')">استعراض</a>
+                    <a href="javascript:void(0)" onclick="alert('الملف: دليل الإرشادات المحاسبية والضريبية - للعرض فقط')">استعراض</a>
                 </li>
             </ul>
         </div>
@@ -253,10 +253,7 @@
             const user = document.getElementById('clientUser').value;
             const pass = document.getElementById('clientPass').value;
 
-            // جلب قاعدة بيانات العملاء المسجلين من اللوحة الرئيسية (LocalStorage)
             const savedClients = JSON.parse(localStorage.getItem('rowadClients')) || [];
-
-            // البحث عن العميل
             const client = savedClients.find(c => c.username === user && c.password === pass);
 
             if (client) {
@@ -264,8 +261,6 @@
                 document.getElementById('clientLoginScreen').style.display = 'none';
                 document.getElementById('clientDashboard').style.display = 'block';
                 document.getElementById('welcomeClientName').innerText = client.name;
-
-                // عرض ملفاته الخاصة من النظام
                 loadClientDocs(client.name);
             } else {
                 document.getElementById('loginError').style.display = 'block';
@@ -276,7 +271,6 @@
             const docList = document.getElementById('clientDocList');
             docList.innerHTML = '';
 
-            // جلب المستندات المسجلة
             const savedDocs = JSON.parse(localStorage.getItem('officeDocs')) || [];
             const clientDocs = savedDocs.filter(d => d.client === clientName);
 
