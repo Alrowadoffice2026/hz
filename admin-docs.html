@@ -252,10 +252,7 @@
             <label for="selectedClient">اسم العميل:</label>
             <select id="selectedClient">
                 <option value="">اختر العميل...</option>
-                <option value="شركة الرواد للتجارة والصناعة">شركة الرواد للتجارة والصناعة</option>
-                <option value="شركة أسبريكس لقطع الغيار">شركة أسبريكس لقطع الغيار</option>
-                <option value="شركة البيان الحديث">شركة البيان الحديث</option>
-            </select>
+                </select>
         </div>
 
         <div class="form-group">
@@ -293,7 +290,6 @@
         </table>
     </div>
 
-    <a href="admin-docs.html" class="nav-link">شاشة إدارة المستندات العامة</a>
     <a href="client-register.html" class="nav-link">العودة لشاشة تسجيل العميل</a>
 </div>
 
@@ -315,6 +311,24 @@
 
 <script>
     let clientDocs = [];
+
+    // تعبئة قائمة العملاء من الـ LocalStorage عند تحميل الصفحة
+    document.addEventListener("DOMContentLoaded", function() {
+        const savedClients = JSON.parse(localStorage.getItem('rowadClients')) || [];
+        const clientSelect = document.getElementById('selectedClient');
+        
+        // مسح الخيارات السابقة
+        clientSelect.innerHTML = '<option value="">اختر العميل...</option>';
+        
+        savedClients.forEach(function(c) {
+            const opt = document.createElement('option');
+            opt.value = c.name;
+            opt.textContent = c.name;
+            clientSelect.appendChild(opt);
+        });
+        
+        updateClientTable();
+    });
 
     // إظهار/إخفاء خانة العميل بناءً على نوع الملف
     function toggleClientSelection() {
@@ -368,7 +382,6 @@
         clientDocs.push(newDoc);
         updateClientTable();
         document.getElementById('clientDocsForm').reset();
-        // إخفاء القائمة بعد الإرسال
         document.getElementById('clientSelectionGroup').style.display = 'none';
     }
 
