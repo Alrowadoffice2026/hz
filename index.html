@@ -3,91 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البوابة الرئيسية - مكتب الرواد</title>
+    <title>منصة مكتب الرواد - لوحة الإدارة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1a365d;
-            --secondary-color: #2b6cb0;
-            --bg-color: #f8f9fa;
-            --text-color: #2d3748;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            
+            --primary: #1a365d; /* أزرق داكن للمكتب */
+            --primary-dark: #122846;
+            --accent: #3182ce;
+            --bg-body: #f1f5f9;
+            --bg-sidebar: #ffffff;
+            --text-sidebar: #4a5568;
+            --text-main: #1a202c;
+            --border-color: #e2e8f0;
+            --shadow-custom: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
             margin: 0;
-            padding: 50px 20px;
-            text-align: center;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            margin-bottom: 40px;
-        }
-
-        .cards-wrapper {
+            padding: 0;
+            background-color: var(--bg-body);
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-main);
         }
 
-        .card {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            width: 280px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-top: 4px solid var(--secondary-color);
+        /* --- شريط التنقل الجانبي (Sidebar) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            height: 100%;
             display: flex;
             flex-direction: column;
+            border-left: 1px solid var(--border-color);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
+            z-index: 100;
+        }
+
+        /* لوجو وهيدر Sidebar */
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
             align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #ffffff;
         }
 
-        .card h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+        .sidebar-header h3 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 18px;
+            font-weight: 800;
         }
 
-        .card a {
-            display: block;
+        /* قائمة الروابط الجانبية */
+        .sidebar-menu {
+            flex-grow: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #a0aec0;
+            padding: 10px 25px;
+            font-weight: 700;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            padding: 14px 25px;
             text-decoration: none;
-            color: var(--secondary-color);
+            color: var(--text-sidebar);
+            font-size: 14px;
+            font-weight: 600;
+            transition: var(--transition);
+            border-right: 4px solid transparent;
+        }
+
+        .menu-item a:hover {
+            background-color: rgba(49, 130, 206, 0.05);
+            color: var(--primary);
+        }
+
+        /* تنسيق الأيقونات الجانبية */
+        .menu-icon {
+            margin-left: 15px; /* مسافة على اليسار في RTL */
+            font-size: 18px;
+            width: 25px;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        /* الرابط النشط */
+        .menu-item a.active {
+            background-color: rgba(49, 130, 206, 0.1);
+            color: var(--primary);
+            border-right-color: var(--accent);
+        }
+        
+        .menu-item a.active .menu-icon {
+            opacity: 1;
+        }
+
+        /* --- المحتوى الرئيسي وهيدر الصفحة --- */
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* الهيدر العلوي فوق الـ iframe */
+        .top-header {
+            height: var(--header-height);
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: var(--shadow-custom);
+            z-index: 90;
+        }
+
+        .top-header h2 {
+            margin: 0;
+            color: var(--text-main);
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .home-btn {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            color: var(--text-sidebar);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
             font-weight: 600;
             font-size: 13px;
-            margin: 10px 0;
-            transition: color 0.2s;
+        }
+        
+        .home-btn:hover {
+            background-color: var(--border-color);
+            color: var(--text-main);
         }
 
-        .card a:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
+        /* الإطار الذى يعرض الشاشات */
+        .content-iframe {
+            flex-grow: 1;
+            width: 100%;
+            height: calc(100vh - var(--header-height));
+            border: none;
+            background-color: var(--bg-body);
         }
     </style>
 </head>
 <body>
 
-    <h1>مكتب الرواد للخدمات المحاسبية والضريبية</h1>
-    <p style="margin-bottom: 40px; color: #4a5568;">الرجاء اختيار الشاشة المطلوبة للعمل عليها:</p>
-
-    <div class="cards-wrapper">
-        
-        <div class="card">
-            <h3>📂 لوحات تحكم المكتب</h3>
-            <a href="admin-dashboard.html">لوحة تحكم المكتب ومراجعة الطلبات</a>
-            <a href="client-followup.html">شاشة متابعة التزامات العملاء</a>
-            <a href="admin-docs.html">إدارة المستندات المؤمنة (العامة)</a>
-        </div>
-
-        <div class="card">
-            <h3>⚙️ عمليات التأسيس والعملاء</h3>
-            <a href="client-register.html">شاشة تسجيل بيانات الشركات الجديدة</a>
-            <a href="client-docs.html">شاشة المستندات الخاصة بالعملاء</a>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>مكتب الرواد للخدمات</h3>
         </div>
         
+        <div class="sidebar-menu">
+            <div class="menu-title">لوحات الإدارة</div>
+            <ul class="menu-list">
+                <li class="menu-item"><a href="#" class="active" onclick="loadPage(event, 'client-followup.html', 'متابعة التزامات العملاء')">
+                    <span class="menu-icon">📊</span>
+                    متابعة التزامات العملاء
+                </a></li>
+                <li class="menu-item"><a href="#" onclick="loadPage(event, 'admin-docs.html', 'إدارة المستندات')">
+                    <span class="menu-icon">📁</span>
+                    إدارة المستندات المؤمنة
+                </a></li>
+                <li class="menu-item"><a href="#" onclick="loadPage(event, 'admin-dashboard.html', 'لوحة تحكم العملاء')">
+                    <span class="menu-icon">👤</span>
+                    لوحة تحكم العملاء
+                </a></li>
+            </ul>
+
+            <div class="menu-title">التأسيس والتسجيل</div>
+            <ul class="menu-list">
+                <li class="menu-item"><a href="#" onclick="loadPage(event, 'client-register.html', 'تسجيل شركة جديدة')">
+                    <span class="menu-icon">⚙️</span>
+                    تسجيل شركة جديدة
+                </a></li>
+                <li class="menu-item"><a href="#" onclick="loadPage(event, 'client-docs.html', 'بوابة مستندات العميل')">
+                    <span class="menu-icon">👁️</span>
+                    بوابة مستندات العميل
+                </a></li>
+            </ul>
+        </div>
     </div>
+
+    <div class="main-wrapper">
+        <div class="top-header">
+            <h2 id="pageTitleHeader">متابعة التزامات العملاء</h2>
+            <a href="#" class="home-btn" onclick="returnToHome()">العودة للرئيسية 🏠</a>
+        </div>
+        
+        <iframe id="mainFrame" class="content-iframe" src="client-followup.html"></iframe>
+    </div>
+
+    <script>
+        function loadPage(event, pageName, title) {
+            if (event) event.preventDefault();
+            
+            // تحديث رابط الصفحة في الـ iframe
+            document.getElementById('mainFrame').src = pageName;
+            
+            // تحديث عنوان الهيدر العلوي
+            document.getElementById('pageTitleHeader').innerText = title;
+            
+            // تحديث حالة 'active' في الـ Sidebar
+            const menuLinks = document.querySelectorAll('.menu-item a');
+            menuLinks.forEach(link => link.classList.remove('active'));
+            
+            if (event) {
+                event.currentTarget.classList.add('active');
+            } else {
+                // في حالة العودة للرئيسية
+                const defaultLink = document.querySelector(`.menu-item a[onclick*="${pageName}"]`);
+                if (defaultLink) defaultLink.classList.add('active');
+            }
+        }
+        
+        function returnToHome() {
+            loadPage(null, 'client-followup.html', 'متابعة التزامات العملاء');
+        }
+    </script>
 
 </body>
 </html>
