@@ -115,7 +115,7 @@
         #clientDashboard {
             display: none;
             padding: 40px 20px;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -153,32 +153,43 @@
             margin-bottom: 15px;
         }
 
-        .file-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        /* جدول المستندات */
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 15px;
         }
 
-        .file-item {
-            padding: 12px 16px;
-            background-color: #f8fafc;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th, td {
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            font-weight: 600;
+            padding: 12px;
+            font-size: 13px;
         }
 
-        .file-item a {
-            color: var(--accent-color);
+        th {
+            background-color: #edf2f7;
+            color: var(--primary-color);
+        }
+
+        .btn-download {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
             text-decoration: none;
+            font-weight: bold;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
         }
 
-        .file-item a:hover {
-            text-decoration: underline;
+        .btn-download:hover {
+            background-color: var(--primary-color);
         }
 
         .logout-btn {
@@ -216,7 +227,7 @@
                 <input type="password" id="clientPass" placeholder="أدخل كلمة المرور">
             </div>
             <button class="login-btn" onclick="loginClient()">دخول</button>
-            <div id="loginError">بيانات الدخول غير صحيحة أو لا توجد ملفات مرتبطة حالياً.</div>
+            <div id="loginError">بيانات الدخول غير صحيحة أو لا توجد ملفات مرتبطة.</div>
         </div>
     </div>
 
@@ -228,40 +239,48 @@
 
         <div class="section-card">
             <h3>📄 المستندات ونماذج التأسيس الخاصة بك</h3>
-            <p>يمكنك استعراض المستندات المرفوعة لك من المكتب:</p>
-            <ul class="file-list" id="clientDocList">
-                </ul>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>عنوان المستند / الملف</th>
+                            <th>نوع الملف</th>
+                            <th>تاريخ الرفع</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientDocTableBody">
+                        </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="section-card">
             <h3>📁 الملفات العامة والمشتركة (للاطلاع فقط)</h3>
-            <ul class="file-list">
-                <li class="file-item">
-                    <span>دليل الإرشادات المحاسبية والضريبية</span>
-                    <a href="javascript:void(0)" onclick="alert('ملف الإرشادات العامة للمكتب')">استعراض</a>
-                </li>
-            </ul>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اسم الملف / الدليل</th>
+                            <th>الصلاحية</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>دليل الإرشادات المحاسبية والضريبية</strong></td>
+                            <td><span style="color:#22543d; font-weight:bold; background:#c6f6d5; padding:3px 6px; border-radius:4px;">مرئي للجميع</span></td>
+                            <td><button class="btn-download" onclick="alert('ملف الإرشادات العامة للمكتب جاهز للاستعراض')">استعراض 👁️</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <a class="logout-btn" href="javascript:void(0)" onclick="logoutClient()">تسجيل الخروج 🔒</a>
     </div>
 
     <script>
-        // للاختبار والتجربة السريعة: إذا لم يكن هناك أي عميل مسجل، نقوم بإضافة عميل افتراضي في الـ LocalStorage
-        if (!localStorage.getItem('rowadClients')) {
-            const demoClients = [
-                { name: "شركة النور", username: "info@alnoor.com", password: "123", phone: "01000000000" }
-            ];
-            localStorage.setItem('rowadClients', JSON.stringify(demoClients));
-        }
-
-        if (!localStorage.getItem('officeDocs')) {
-            const demoDocs = [
-                { client: "شركة النور", type: "أساسي", title: "نموذج تأسيس الشركة", files: "📄_تأسيس_الشركة.pdf", date: "2026-05-01" }
-            ];
-            localStorage.setItem('officeDocs', JSON.stringify(demoDocs));
-        }
-
         function loginClient() {
             const user = document.getElementById('clientUser').value.trim();
             const pass = document.getElementById('clientPass').value.trim();
@@ -281,28 +300,29 @@
         }
 
         function loadClientDocs(clientName) {
-            const docList = document.getElementById('clientDocList');
-            docList.innerHTML = '';
+            const tableBody = document.getElementById('clientDocTableBody');
+            tableBody.innerHTML = '';
 
             const savedDocs = JSON.parse(localStorage.getItem('officeDocs')) || [];
             
-            // نجلب المستندات الخاصة بالعميل مع مراعاة البحث عن الاسم
+            // فلترة المستندات الخاصة بهذا العميل فقط
             const clientDocs = savedDocs.filter(d => d.client.trim() === clientName.trim());
 
             if (clientDocs.length === 0) {
-                docList.innerHTML = `<li class="file-item">لا توجد ملفات مرفوعة لشركتك حتى الآن في هذا النظام.</li>`;
+                tableBody.innerHTML = `<tr><td colspan="4" style="color:#718096; padding:15px;">لا توجد ملفات مرفوعة لشركتك حتى الآن في هذا النظام.</td></tr>`;
             } else {
                 clientDocs.forEach(doc => {
-                    const li = document.createElement('li');
-                    li.className = 'file-item';
-                    li.innerHTML = `
-                        <span><strong>${doc.title}</strong> - (${doc.date})</span>
-                        <a href="javascript:void(0)" onclick="alert('جاري تجهيز الملف للتحميل: ${doc.files}')">تحميل المستند 📥</a>
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td><strong>${doc.title}</strong></td>
+                            <td><span style="background:#ebf8ff; color:#2b6cb0; padding:3px 6px; border-radius:4px;">${doc.type}</span></td>
+                            <td>${doc.date}</td>
+                            <td><button class="btn-download" onclick="alert('تم تجهيز الملف (${doc.files}) للتحميل. تم تأكيد الحماية.')">تحميل المستند 📥</button></td>
+                        </tr>
                     `;
-                    docList.appendChild(li);
                 });
             }
-        }
+        }س
 
         function logoutClient() {
             document.getElementById('clientDashboard').style.display = 'none';
