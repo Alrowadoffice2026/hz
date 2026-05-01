@@ -355,7 +355,655 @@
         }
     }
 
+    function searchObligations() {<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتب الرواد - متابعة التزامات وتواريخ العملاء</title>
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --accent-color: #3182ce;
+            --bg-color: #f8f9fa;
+            --border-color: #cbd5e1;
+            --text-color: #2d3748;
+            --danger-color: #c53030;
+            --success-color: #22543d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            color: var(--secondary-color);
+            margin: 20px 0 15px 0;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .search-box {
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        label {
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 13px;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        /* قائمة الاقتراحات للبحث السريع */
+        .autocomplete-list {
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+            top: 100%;
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #edf2f7;
+        }
+
+        .alert-box {
+            background-color: #fff5f5;
+            border: 1px solid #feb2b2;
+            color: var(--danger-color);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .btn-action, .btn-secondary {
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.2s;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-action {
+            background-color: var(--primary-color);
+        }
+
+        .btn-action:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background-color: #48bb78;
+        }
+
+        .btn-secondary:hover {
+            background-color: #38a169;
+        }
+
+        .btn-danger {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .btn-danger:hover {
+            background-color: #c53030;
+        }
+
+        .btn-edit {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+            margin-left: 4px;
+        }
+
+        .btn-edit:hover {
+            background-color: #1a365d;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            min-width: 1000px;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 12px;
+        }
+
+        th {
+            background-color: #edf2f7;
+            color: var(--primary-color);
+        }
+
+        .badge-success {
+            background-color: #c6f6d5;
+            color: var(--success-color);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .import-section {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px dashed var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>شاشة متابعة التزامات العملاء - مكتب الرواد</h2>
+
+    <div id="alertBox" class="alert-box"></div>
+
+    <div class="import-section">
+        <div class="section-title" style="margin-top: 0;">استيراد بيانات العملاء من ملف Excel (CSV)</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="excelFileInput">اختر ملف CSV:</label>
+                <input type="file" id="excelFileInput" accept=".csv" style="padding: 5px;">
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn-secondary" onclick="importFromCsv()">رفع واستيراد البيانات</button>
+            </div>
+        </div>
+        <div style="font-size: 11px; color: #4a5568;">
+            * هيدر الملف: (اسم العميل، الكيان القانوني، تاريخ التأسيس، رقم التسجيل، العنوان، المأمورية، كود النشاط، تاريخ البطاقة الضريبية، تاريخ السجل، تاريخ التصديرية، تاريخ الاستيرادية، دورية الالتزام، نوع الالتزام).
+        </div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="mainSearchInput" placeholder="ابحث باسم العميل أو رقم التسجيل..." onkeyup="searchObligations()">
+    </div>
+
+    <form id="clientFollowupForm" onsubmit="saveClientRecord(event)">
+        <input type="hidden" id="editIndex" value="-1">
+        
+        <div class="section-title">تسجيل بيانات العميل والتزاماته</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="searchableClient">اسم العميل:</label>
+                <input type="text" id="searchableClient" placeholder="اكتب للبحث السريع أو اختر العميل..." onfocus="showClientList()" oninput="filterClientList()" autocomplete="off" required>
+                <div id="clientListBox" class="autocomplete-list"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="legalEntity">الكيان القانونى:</label>
+                <input type="text" id="legalEntity" placeholder="اكتب الكيان القانوني هنا" required>
+            </div>
+
+            <div class="form-group">
+                <label for="foundingDate">تاريخ التأسيس:</label>
+                <input type="date" id="foundingDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="taxNumber">رقم التسجيل الضريبي:</label>
+                <input type="text" id="taxNumber" placeholder="رقم التسجيل الضريبي" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address">عنوان الشركة:</label>
+                <input type="text" id="address" placeholder="عنوان الشركة" required>
+            </div>
+
+            <div class="form-group">
+                <label for="taxOffice">المأمورية التابعة:</label>
+                <input type="text" id="taxOffice" placeholder="المأمورية" required>
+            </div>
+
+            <div class="form-group">
+                <label for="activityCode">كود النشاط:</label>
+                <input type="text" id="activityCode" placeholder="كود النشاط" required>
+            </div>
+        </div>
+
+        <div class="section-title">تواريخ انتهاء التراخيص والبطاقات</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="taxCardExpiry">تاريخ انتهاء البطاقة الضريبية:</label>
+                <input type="date" id="taxCardExpiry" required>
+            </div>
+            <div class="form-group">
+                <label for="commercialExpiry">تاريخ انتهاء السجل التجاري:</label>
+                <input type="date" id="commercialExpiry" required>
+            </div>
+            <div class="form-group">
+                <label for="exportExpiry">تاريخ انتهاء البطاقة التصديرية:</label>
+                <input type="date" id="exportExpiry" required>
+            </div>
+            <div class="form-group">
+                <label for="importExpiry">تاريخ انتهاء البطاقة الاستيرادية:</label>
+                <input type="date" id="importExpiry" required>
+            </div>
+        </div>
+
+        <div class="section-title">الالتزامات الضريبية</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="obligationPeriod">دورية الالتزام:</label>
+                <select id="obligationPeriod" required>
+                    <option value="شهري">التزام شهري</option>
+                    <option value="ربع سنوي">التزام ربع سنوي</option>
+                    <option value="سنوي">التزام سنوي</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="obligationType">نوع الالتزام الضريبي:</label>
+                <select id="obligationType" required>
+                    <option value="قيمة مضافة">قيمة مضافة</option>
+                    <option value="نموذج 41">نموذج 41</option>
+                    <option value="نموذج سداد شهري">نموذج سداد شهري</option>
+                    <option value="نموذج 6 مرتبات">نموذج 6 مرتبات</option>
+                    <option value="إقرار سنوي">إقرار سنوي</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-action" id="submitBtn">حفظ بيانات ومتابعة العميل</button>
+    </form>
+
+    <div class="table-responsive">
+        <table id="followupTable">
+            <thead>
+                <tr>
+                    <th>اسم العميل</th>
+                    <th>الكيان القانوني</th>
+                    <th>رقم التسجيل</th>
+                    <th>الضرائب والمأمورية</th>
+                    <th>كود النشاط</th>
+                    <th>صلاحية التراخيص</th>
+                    <th>دورية ونوع الالتزام</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="8" style="color: #718096; padding: 20px;">لا توجد بيانات مسجلة حالياً</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a href="dashboard-all.html" class="nav-link">العودة للوحة التحكم الرئيسية</a>
+</div>
+
+<script>
+    let clientRecords = [];
+    let savedClientsList = [];
+
+    document.addEventListener("DOMContentLoaded", function() {
+        savedClientsList = JSON.parse(localStorage.getItem('rowadClients')) || [];
+        clientRecords = JSON.parse(localStorage.getItem('clientFollowupRecords')) || [];
+        
+        updateTable(clientRecords);
+
+        document.addEventListener('click', function(e) {
+            if (e.target.id !== 'searchableClient') {
+                document.getElementById('clientListBox').style.display = 'none';
+            }
+        });
+    });
+
+    function showClientList() {
+        const box = document.getElementById('clientListBox');
+        box.style.display = 'block';
+        renderClientList(savedClientsList);
+    }
+
+    function filterClientList() {
+        const value = document.getElementById('searchableClient').value.toLowerCase();
+        const filtered = savedClientsList.filter(c => c.name.toLowerCase().includes(value));
+        renderClientList(filtered);
+    }
+
+    function renderClientList(data) {
+        const box = document.getElementById('clientListBox');
+        box.innerHTML = '';
+        
+        if (data.length === 0) {
+            box.innerHTML = `<div class="autocomplete-item" style="color:#718096">لا يوجد عميل بهذا الاسم</div>`;
+            return;
+        }
+        
+        data.forEach(c => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.innerText = c.name;
+            item.onclick = function() {
+                document.getElementById('searchableClient').value = c.name;
+                box.style.display = 'none';
+            };
+            box.appendChild(item);
+        });
+    }
+
+    function saveClientRecord(event) {
+        event.preventDefault();
+        
+        const editIndex = parseInt(document.getElementById('editIndex').value);
+        
+        const record = {
+            clientName: document.getElementById('searchableClient').value,
+            legalEntity: document.getElementById('legalEntity').value,
+            foundingDate: document.getElementById('foundingDate').value,
+            taxNumber: document.getElementById('taxNumber').value,
+            address: document.getElementById('address').value,
+            taxOffice: document.getElementById('taxOffice').value,
+            activityCode: document.getElementById('activityCode').value,
+            taxCardExpiry: document.getElementById('taxCardExpiry').value,
+            commercialExpiry: document.getElementById('commercialExpiry').value,
+            exportExpiry: document.getElementById('exportExpiry').value,
+            importExpiry: document.getElementById('importExpiry').value,
+            obligationPeriod: document.getElementById('obligationPeriod').value,
+            obligationType: document.getElementById('obligationType').value
+        };
+
+        if (editIndex === -1) {
+            clientRecords.push(record);
+        } else {
+            clientRecords[editIndex] = record;
+            document.getElementById('editIndex').value = -1;
+            document.getElementById('submitBtn').innerText = 'حفظ بيانات ومتابعة العميل';
+        }
+
+        localStorage.setItem('clientFollowupRecords', JSON.stringify(clientRecords));
+        updateTable(clientRecords);
+        document.getElementById('clientFollowupForm').reset();
+        checkExpirations(record);
+    }
+
+    function editRecord(index) {
+        const record = clientRecords[index];
+        
+        document.getElementById('editIndex').value = index;
+        document.getElementById('searchableClient').value = record.clientName;
+        document.getElementById('legalEntity').value = record.legalEntity;
+        document.getElementById('foundingDate').value = record.foundingDate;
+        document.getElementById('taxNumber').value = record.taxNumber;
+        document.getElementById('address').value = record.address;
+        document.getElementById('taxOffice').value = record.taxOffice;
+        document.getElementById('activityCode').value = record.activityCode;
+        document.getElementById('taxCardExpiry').value = record.taxCardExpiry;
+        document.getElementById('commercialExpiry').value = record.commercialExpiry;
+        document.getElementById('exportExpiry').value = record.exportExpiry;
+        document.getElementById('importExpiry').value = record.importExpiry;
+        document.getElementById('obligationPeriod').value = record.obligationPeriod;
+        document.getElementById('obligationType').value = record.obligationType;
+
+        document.getElementById('submitBtn').innerText = 'تعديل بيانات العميل';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteRecord(index) {
+        if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
+            clientRecords.splice(index, 1);
+            localStorage.setItem('clientFollowupRecords', JSON.stringify(clientRecords));
+            updateTable(clientRecords);
+        }
+    }
+
+    function checkExpirations(record) {
+        const today = new Date();
+        const alertBox = document.getElementById('alertBox');
+        let warnings = [];
+
+        const items = [
+            { label: 'البطاقة الضريبية', date: record.taxCardExpiry },
+            { label: 'السجل التجاري', date: record.commercialExpiry },
+            { label: 'البطاقة التصديرية', date: record.exportExpiry },
+            { label: 'البطاقة الاستيرادية', date: record.importExpiry }
+        ];
+
+        items.forEach(item => {
+            const expDate = new Date(item.date);
+            const diffTime = expDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 10 && diffDays >= 0) {
+                warnings.push(`تنبيه: ${item.label} الخاصة بالعميل "${record.clientName}" ستنتهي خلال ${diffDays} أيام.`);
+            } else if (diffDays < 0) {
+                warnings.push(`تنبيه: ${item.label} الخاصة بالعميل "${record.clientName}" منتهية الصلاحية.`);
+            }
+        });
+
+        if (warnings.length > 0) {
+            alertBox.innerHTML = warnings.join('<br>');
+            alertBox.style.display = 'block';
+        } else {
+            alertBox.style.display = 'none';
+        }
+    }
+
+    function updateTable(data) {
+        const tbody = document.querySelector('#followupTable tbody');
+        tbody.innerHTML = '';
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="color: #718096; padding: 20px;">لا توجد بيانات مسجلة حالياً</td></tr>`;
+            return;
+        }
+
+        data.forEach((r, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${r.clientName}</strong></td>
+                    <td>${r.legalEntity}</td>
+                    <td>${r.taxNumber}</td>
+                    <td>${r.taxOffice}<br><span style="font-size:10px; color:#555">${r.address}</span></td>
+                    <td>${r.activityCode}</td>
+                    <td style="text-align:right;">
+                        • ضريبية: ${r.taxCardExpiry}<br>
+                        • تجاري: ${r.commercialExpiry}<br>
+                        • تصديرية: ${r.exportExpiry}<br>
+                        • استيرادية: ${r.importExpiry}
+                    </td>
+                    <td>
+                        <span class="badge-success">${r.obligationPeriod}</span>
+                        <br>
+                        ${r.obligationType}
+                    </td>
+                    <td>
+                        <button class="btn-edit" onclick="editRecord(${index})">تعديل</button>
+                        <button class="btn-danger" onclick="deleteRecord(${index})">حذف</button>
+                        <br><br>
+                        <button onclick="alert('تم تجهيز التقرير الضريبي الخاص بالعميل')" style="background:none; border:none; color:var(--accent-color); cursor:pointer; font-weight:bold;">إصدار تقرير</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function importFromCsv() {
+        const fileInput = document.getElementById('excelFileInput');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('يرجى اختيار ملف CSV أولاً.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const lines = text.split('\n');
+            
+            let importedCount = 0;
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                
+                const data = lines[i].split(',');
+
+                if (data.length >= 13) {
+                    const record = {
+                        clientName: data[0].trim(),
+                        legalEntity: data[1].trim(),
+                        foundingDate: data[2].trim(),
+                        taxNumber: data[3].trim(),
+                        address: data[4].trim(),
+                        taxOffice: data[5].trim(),
+                        activityCode: data[6].trim(),
+                        taxCardExpiry: data[7].trim(),
+                        commercialExpiry: data[8].trim(),
+                        exportExpiry: data[9].trim(),
+                        importExpiry: data[10].trim(),
+                        obligationPeriod: data[11].trim(),
+                        obligationType: data[12].trim()
+                    };
+                    clientRecords.push(record);
+                    importedCount++;
+                }
+            }
+
+            if (importedCount > 0) {
+                localStorage.setItem('clientFollowupRecords', JSON.stringify(clientRecords));
+                updateTable(clientRecords);
+                alert(`تم استيراد ${importedCount} عميل بنجاح!`);
+            } else {
+                alert('عذراً، لم يتم العثور على بيانات صالحة. يرجى التأكد من التنسيق.');
+            }
+            fileInput.value = '';
+        };
+        reader.readAsText(file);
+    }
+
     function searchObligations() {
+        const input = document.getElementById('mainSearchInput').value.toLowerCase();
+        const filtered = clientRecords.filter(r => 
+            r.clientName.toLowerCase().includes(input) || 
+            (r.taxNumber && r.taxNumber.toLowerCase().includes(input))
+        );
+        updateTable(filtered);
+    }
+</script>
+
+</body>
+</html>
         const input = document.getElementById('mainSearchInput').value.toLowerCase();
         const filtered = allObligations.filter(r => 
             r.clientName.toLowerCase().includes(input) || 
