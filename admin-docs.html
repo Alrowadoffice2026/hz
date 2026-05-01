@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المستندات</title>
+    <title>مكتب الرواد - المستندات المؤمنة</title>
     <style>
         :root {
             --primary-color: #1a365d;
@@ -62,6 +62,7 @@
 
         .form-group {
             margin-bottom: 15px;
+            position: relative;
         }
 
         label {
@@ -84,6 +85,29 @@
         input:focus, select:focus {
             border-color: var(--accent-color);
             outline: none;
+        }
+
+        /* قائمة الاقتراحات للبحث المباشر */
+        .autocomplete-list {
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #edf2f7;
         }
 
         .note-text {
@@ -239,10 +263,10 @@
 <body oncontextmenu="return false;">
 
 <div class="container">
-    <h2>إدارة المستندات)</h2>
+    <h2>إدارة مستندات العملاء (نظام الحماية والأمان)</h2>
 
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="ابحث باسم العميل أو العنوان..." onkeyup="searchDocs()">
+        <input type="text" id="mainSearchInput" placeholder="ابحث في المستندات باسم العميل أو العنوان..." onkeyup="searchDocs()">
     </div>
 
     <form id="clientDocsForm" onsubmit="addClientDocs(event)">
@@ -258,10 +282,9 @@
         </div>
 
         <div class="form-group" id="clientSelectionGroup" style="display: none;">
-            <label for="selectedClient">اسم العميل:</label>
-            <select id="selectedClient">
-                <option value="">اختر العميل...</option>
-                </select>
+            <label for="searchableDocClient">اسم العميل (اكتب للبحث السريع):</label>
+            <input type="text" id="searchableDocClient" placeholder="ابحث عن اسم العميل..." onfocus="showDocClientList()" oninput="filterDocClientList()" autocomplete="off">
+            <div id="docClientListBox" class="autocomplete-list"></div>
         </div>
 
         <div class="form-group">
@@ -320,37 +343,66 @@
 
 <script>
     let clientDocs = [];
+    let savedClientsList = [];
 
     document.addEventListener("DOMContentLoaded", function() {
-        // جلب أسماء العملاء من الـ LocalStorage
-        const savedClients = JSON.parse(localStorage.getItem('rowadClients')) || [];
-        const clientSelect = document.getElementById('selectedClient');
-        
-        clientSelect.innerHTML = '<option value="">اختر العميل...</option>';
-        savedClients.forEach(function(c) {
-            const opt = document.createElement('option');
-            opt.value = c.name;
-            opt.textContent = c.name;
-            clientSelect.appendChild(opt);
-        });
+        // جلب أسماء العملاء المسجلين
+        savedClientsList = JSON.parse(localStorage.getItem('rowadClients')) || [];
         
         // استرجاع المستندات
         clientDocs = JSON.parse(localStorage.getItem('officeDocs')) || [];
         updateClientTable(clientDocs);
+        
+        // إغلاق القوائم عند النقر في أي مكان خارج الحقول
+        document.addEventListener('click', function(e) {
+            if (e.target.id !== 'searchableDocClient') {
+                document.getElementById('docClientListBox').style.display = 'none';
+            }
+        });
     });
+
+    function showDocClientList() {
+        const box = document.getElementById('docClientListBox');
+        box.style.display = 'block';
+        renderDocClientList(savedClientsList);
+    }
+
+    function filterDocClientList() {
+        const value = document.getElementById('searchableDocClient').value.toLowerCase();
+        const filtered = savedClientsList.filter(c => c.name.toLowerCase().includes(value));
+        renderDocClientList(filtered);
+    }
+
+    function renderDocClientList(data) {
+        const box = document.getElementById('docClientListBox');
+        box.innerHTML = '';
+        
+        if (data.length === 0) {
+            box.innerHTML = `<div class="autocomplete-item" style="color:#718096">لا يوجد عميل بهذا الاسم</div>`;
+            return;
+        }
+        
+        data.forEach(c => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.innerText = c.name;
+            item.onclick = function() {
+                document.getElementById('searchableDocClient').value = c.name;
+                box.style.display = 'none';
+            };
+            box.appendChild(item);
+        });
+    }
 
     function toggleClientSelection() {
         const docType = document.getElementById('docType').value;
         const clientGroup = document.getElementById('clientSelectionGroup');
-        const clientSelect = document.getElementById('selectedClient');
 
         if (docType === 'أساسي') {
             clientGroup.style.display = 'block';
-            clientSelect.setAttribute('required', 'required');
         } else {
             clientGroup.style.display = 'none';
-            clientSelect.removeAttribute('required');
-            clientSelect.value = '';
+            document.getElementById('searchableDocClient').value = '';
         }
     }
 
@@ -361,7 +413,7 @@
         let clientName = "جميع العملاء";
         
         if (docType === 'أساسي') {
-            clientName = document.getElementById('selectedClient').value;
+            clientName = document.getElementById('searchableDocClient').value || "غير محدد";
         }
 
         const title = document.getElementById('clientDocTitle').value;
@@ -415,8 +467,8 @@
                     <td>${visibilityBadge}</td>
                     <td>${doc.date}</td>
                     <td>
-                        <button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="viewSecureDoc()">استعراض</button>
-                        <button class="btn-danger" style="padding:4px 8px; font-size:11px; background:#e53e3e;" onclick="deleteDoc(${index})">حذف</button>
+                        <button class="btn-action" style="padding:4px 8px; font-size:11px; margin-top:0;" onclick="viewSecureDoc()">استعراض</button>
+                        <button class="btn-danger" style="padding:4px 8px; font-size:11px; background:#e53e3e; border:none; color:#fff; border-radius:4px; cursor:pointer;" onclick="deleteDoc(${index})">حذف</button>
                     </td>
                 </tr>
             `;
@@ -432,7 +484,7 @@
     }
 
     function searchDocs() {
-        const input = document.getElementById('searchInput').value.toLowerCase();
+        const input = document.getElementById('mainSearchInput').value.toLowerCase();
         const filtered = clientDocs.filter(d => 
             d.client.toLowerCase().includes(input) || 
             d.title.toLowerCase().includes(input)
