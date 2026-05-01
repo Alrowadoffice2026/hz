@@ -216,7 +216,7 @@
                 <input type="password" id="clientPass" placeholder="أدخل كلمة المرور">
             </div>
             <button class="login-btn" onclick="loginClient()">دخول</button>
-            <div id="loginError">بيانات الدخول غير صحيحة.</div>
+            <div id="loginError">بيانات الدخول غير صحيحة أو لا توجد ملفات مرتبطة حالياً.</div>
         </div>
     </div>
 
@@ -227,8 +227,8 @@
         </div>
 
         <div class="section-card">
-            <h3>📄 نموذج التأسيس والأوراق الرسمية</h3>
-            <p>يمكنك استعراض وتحميل نماذج التأسيس الخاصة بك هنا:</p>
+            <h3>📄 المستندات ونماذج التأسيس الخاصة بك</h3>
+            <p>يمكنك استعراض المستندات المرفوعة لك من المكتب:</p>
             <ul class="file-list" id="clientDocList">
                 </ul>
         </div>
@@ -238,7 +238,7 @@
             <ul class="file-list">
                 <li class="file-item">
                     <span>دليل الإرشادات المحاسبية والضريبية</span>
-                    <a href="javascript:void(0)" onclick="alert('الملف: دليل الإرشادات المحاسبية والضريبية - للعرض فقط')">استعراض</a>
+                    <a href="javascript:void(0)" onclick="alert('ملف الإرشادات العامة للمكتب')">استعراض</a>
                 </li>
             </ul>
         </div>
@@ -247,20 +247,33 @@
     </div>
 
     <script>
-        let authenticatedClient = null;
+        // للاختبار والتجربة السريعة: إذا لم يكن هناك أي عميل مسجل، نقوم بإضافة عميل افتراضي في الـ LocalStorage
+        if (!localStorage.getItem('rowadClients')) {
+            const demoClients = [
+                { name: "شركة النور", username: "info@alnoor.com", password: "123", phone: "01000000000" }
+            ];
+            localStorage.setItem('rowadClients', JSON.stringify(demoClients));
+        }
+
+        if (!localStorage.getItem('officeDocs')) {
+            const demoDocs = [
+                { client: "شركة النور", type: "أساسي", title: "نموذج تأسيس الشركة", files: "📄_تأسيس_الشركة.pdf", date: "2026-05-01" }
+            ];
+            localStorage.setItem('officeDocs', JSON.stringify(demoDocs));
+        }
 
         function loginClient() {
-            const user = document.getElementById('clientUser').value;
-            const pass = document.getElementById('clientPass').value;
+            const user = document.getElementById('clientUser').value.trim();
+            const pass = document.getElementById('clientPass').value.trim();
 
             const savedClients = JSON.parse(localStorage.getItem('rowadClients')) || [];
             const client = savedClients.find(c => c.username === user && c.password === pass);
 
             if (client) {
-                authenticatedClient = client;
                 document.getElementById('clientLoginScreen').style.display = 'none';
                 document.getElementById('clientDashboard').style.display = 'block';
                 document.getElementById('welcomeClientName').innerText = client.name;
+                
                 loadClientDocs(client.name);
             } else {
                 document.getElementById('loginError').style.display = 'block';
@@ -272,17 +285,19 @@
             docList.innerHTML = '';
 
             const savedDocs = JSON.parse(localStorage.getItem('officeDocs')) || [];
-            const clientDocs = savedDocs.filter(d => d.client === clientName);
+            
+            // نجلب المستندات الخاصة بالعميل مع مراعاة البحث عن الاسم
+            const clientDocs = savedDocs.filter(d => d.client.trim() === clientName.trim());
 
             if (clientDocs.length === 0) {
-                docList.innerHTML = `<li class="file-item">لا توجد ملفات مرفوعة لشركتك حتى الآن.</li>`;
+                docList.innerHTML = `<li class="file-item">لا توجد ملفات مرفوعة لشركتك حتى الآن في هذا النظام.</li>`;
             } else {
                 clientDocs.forEach(doc => {
                     const li = document.createElement('li');
                     li.className = 'file-item';
                     li.innerHTML = `
-                        <span><strong>${doc.title}</strong> - (بتاريخ ${doc.date})</span>
-                        <a href="javascript:void(0)" onclick="alert('الملف: ${doc.files}')">استعراض وحفظ</a>
+                        <span><strong>${doc.title}</strong> - (${doc.date})</span>
+                        <a href="javascript:void(0)" onclick="alert('جاري تجهيز الملف للتحميل: ${doc.files}')">تحميل المستند 📥</a>
                     `;
                     docList.appendChild(li);
                 });
@@ -290,7 +305,6 @@
         }
 
         function logoutClient() {
-            authenticatedClient = null;
             document.getElementById('clientDashboard').style.display = 'none';
             document.getElementById('clientLoginScreen').style.display = 'flex';
             document.getElementById('clientUser').value = '';
