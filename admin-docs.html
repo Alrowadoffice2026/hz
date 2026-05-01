@@ -20,13 +20,6 @@
             color: var(--text-color);
             line-height: 1.6;
             padding: 20px;
-            background-image: url('https://blogger.googleusercontent.com/img/a/AVvXsEh4hJ4vB-t6l_gq9_W3C_I7wT8oG_3gL_w8n1V_s5M0qK6U019F_fMv3h1W7771_0nL5P-4o9u0w8E0z6x9Z653p5W-3A_t2_1h4y6h0x6_6y8Y_7h3W_5x4P_6z4_m6t2_');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-attachment: fixed;
-            background-size: 350px;
-            background-color: rgba(248, 249, 250, 0.95);
-            background-blend-mode: overlay;
         }
 
         .container {
@@ -164,74 +157,9 @@
         .nav-link:hover {
             text-decoration: underline;
         }
-
-        .secure-modal {
-            display: none;
-            position: fixed;
-            z-index: 200;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .secure-content {
-            background-color: #fff;
-            width: 85%;
-            max-width: 750px;
-            height: 75vh;
-            border-radius: 8px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .secure-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #cbd5e1;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .secure-body {
-            flex-grow: 1;
-            position: relative;
-            overflow: auto;
-            background-image: linear-gradient(rgba(26, 54, 93, 0.05), rgba(26, 54, 93, 0.05));
-        }
-
-        .watermark-overlay {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            color: rgba(0, 0, 0, 0.04);
-            font-weight: bold;
-            font-size: 20px;
-            text-align: center;
-        }
-
-        .viewer-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            user-select: none;
-        }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
 <div class="container">
     <h2>إدارة مستندات العملاء (نظام الحماية والأمان)</h2>
@@ -290,36 +218,18 @@
         </table>
     </div>
 
-    <a href="client-register.html" class="nav-link">العودة لشاشة تسجيل العميل</a>
-</div>
-
-<div id="secureViewer" class="secure-modal">
-    <div class="secure-content">
-        <div class="secure-header">
-            <h4>استعراض المستند - مكتب الرواد (للاطلاع فقط)</h4>
-            <span class="close-btn" onclick="closeSecureViewer()">&times;</span>
-        </div>
-        <div class="secure-body">
-            <div class="watermark-overlay">
-                <div>مكتب الرواد للخدمات المحاسبية والضريبية</div>
-                <div>خاص بالعميل - غير مسموح بالتصوير</div>
-            </div>
-            <iframe id="docFrame" class="viewer-frame" src="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"></iframe>
-        </div>
-    </div>
+    <a href="dashboard-all.html" class="nav-link">العودة للوحة التحكم الرئيسية 🏠</a>
 </div>
 
 <script>
     let clientDocs = [];
 
-    // تعبئة قائمة العملاء من الـ LocalStorage عند تحميل الصفحة
     document.addEventListener("DOMContentLoaded", function() {
+        // جلب أسماء العملاء من الـ LocalStorage
         const savedClients = JSON.parse(localStorage.getItem('rowadClients')) || [];
         const clientSelect = document.getElementById('selectedClient');
         
-        // مسح الخيارات السابقة
         clientSelect.innerHTML = '<option value="">اختر العميل...</option>';
-        
         savedClients.forEach(function(c) {
             const opt = document.createElement('option');
             opt.value = c.name;
@@ -330,7 +240,6 @@
         updateClientTable();
     });
 
-    // إظهار/إخفاء خانة العميل بناءً على نوع الملف
     function toggleClientSelection() {
         const docType = document.getElementById('docType').value;
         const clientGroup = document.getElementById('clientSelectionGroup');
@@ -342,16 +251,9 @@
         } else {
             clientGroup.style.display = 'none';
             clientSelect.removeAttribute('required');
+            clientSelect.value = ''; // تصفية الاختيار
         }
     }
-
-    // منع نسخ النصوص وللتأكد من عدم أخذ لقطة للشاشة
-    document.addEventListener('keydown', function (e) {
-        if (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'c' || e.key === 'u')) {
-            e.preventDefault();
-            alert('تم حظر هذه الخاصية لأغراض أمنية.');
-        }
-    });
 
     function addClientDocs(event) {
         event.preventDefault();
@@ -396,15 +298,12 @@
         
         clientDocs.forEach((doc, index) => {
             let visibilityBadge = '';
-            let actionBtn = '';
             
             if (doc.type === 'أساسي') {
                 visibilityBadge = `<span class="badge-client">خاص بالعميل والمكتب</span>`;
             } else {
                 visibilityBadge = `<span class="badge-all">مرئي للجميع (للاطلاع فقط)</span>`;
             }
-            
-            actionBtn = `<button onclick="viewSecureDoc()" style="background:none; border:none; color:var(--accent-color); cursor:pointer; font-weight:bold;">استعراض</button>`;
 
             tbody.innerHTML += `
                 <tr>
@@ -414,18 +313,10 @@
                     <td>${doc.files}</td>
                     <td>${visibilityBadge}</td>
                     <td>${doc.date}</td>
-                    <td>${actionBtn}</td>
+                    <td><button onclick="this.closest('tr').remove()" style="background:#e53e3e; color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">حذف</button></td>
                 </tr>
             `;
         });
-    }
-
-    function viewSecureDoc() {
-        document.getElementById('secureViewer').style.display = 'flex';
-    }
-
-    function closeSecureViewer() {
-        document.getElementById('secureViewer').style.display = 'none';
     }
 </script>
 
