@@ -153,7 +153,6 @@
             margin-bottom: 15px;
         }
 
-        /* شريط البحث */
         .search-box {
             margin-bottom: 15px;
         }
@@ -166,7 +165,6 @@
             font-size: 13px;
         }
 
-        /* الجدول الخاص بالمستندات */
         .table-responsive {
             overflow-x: auto;
             max-height: 400px;
@@ -202,6 +200,7 @@
             border: none;
             cursor: pointer;
             margin: 2px;
+            display: inline-block;
         }
 
         .btn-action:hover {
@@ -298,7 +297,7 @@
                         <tr>
                             <td><strong>دليل الإرشادات المحاسبية والضريبية</strong></td>
                             <td><span style="color:#22543d; font-weight:bold; background:#c6f6d5; padding:3px 6px; border-radius:4px;">مرئي للجميع</span></td>
-                            <td><button class="btn-action" onclick="alert('ملف الإرشادات العامة للمكتب جاهز للاستعراض')">استعراض 👁️</button></td>
+                            <td><a class="btn-action" href="assets/guide.pdf" target="_blank">استعراض 👁️</a></td>
                         </tr>
                     </tbody>
                 </table>
@@ -310,6 +309,16 @@
 
     <script>
         let currentClientDocs = [];
+
+        // للاختبار والتجربة السريعة
+        if (!localStorage.getItem('rowadClients')) {
+            localStorage.setItem('rowadClients', JSON.stringify([
+                { name: "شركة الروائع", username: "info@alrowad.com", password: "123" }
+            ]));
+            localStorage.setItem('officeDocs', JSON.stringify([
+                { client: "شركة الروائع", title: "السجل التجاري والبطاقة الضريبية", files: "سجل_الروائع.pdf", date: "2026-05-01" }
+            ]));
+        }
 
         function loginClient() {
             const user = document.getElementById('clientUser').value.trim();
@@ -331,11 +340,7 @@
 
         function loadClientDocs(clientName) {
             const savedDocs = JSON.parse(localStorage.getItem('officeDocs')) || [];
-            
-            // جلب المستندات الخاصة بالعميل مع إزالة أي مسافات زائدة
             currentClientDocs = savedDocs.filter(d => d.client.trim() === clientName.trim());
-            
-            // عرض المستندات
             renderDocsTable(currentClientDocs);
         }
 
@@ -344,20 +349,24 @@
             tableBody.innerHTML = '';
 
             if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" style="color:#718096; padding:15px;">لا توجد ملفات مرفوعة لشركتك حتى الآن.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="3" style="color:#718096; padding:15px;">لا توجد ملفات مرفوعة لشركتك حتى الآن.</td></tr>`;
             } else {
                 data.forEach((doc) => {
-                    // نفترض أن حقل doc.files يحتوي على أسماء الملفات المفصولة بفاصلة
+                    // نفترض أن الملفات قد تكون مفصولة بفاصلة إذا أضفت أكثر من ملف
                     const filesArray = doc.files.split(',').map(f => f.trim());
                     
                     filesArray.forEach((file) => {
+                        // هنا يتم بناء الرابط الفعلي للملف على مستودع GitHub
+                        // استبدل "alrowadoffice2026" باسم المستخدم الخاص بك على GitHub
+                        const fileUrl = `https://alrowadoffice2026.github.io/hz/files/${file}`;
+
                         tableBody.innerHTML += `
                             <tr>
                                 <td><strong>${doc.title}</strong> - <span style="font-size:11px; color:#4a5568">${file}</span></td>
                                 <td>${doc.date}</td>
                                 <td>
-                                    <button class="btn-action btn-view" onclick="alert('تم الاستعراض الآمن للملف: ${file}')">استعراض 👁️</button>
-                                    <button class="btn-action" onclick="alert('جارٍ تجهيز الملف للتحميل: ${file}')">تحميل 📥</button>
+                                    <a class="btn-action btn-view" href="${fileUrl}" target="_blank">استعراض 👁️</a>
+                                    <a class="btn-action" href="${fileUrl}" download="${file}">تحميل 📥</a>
                                 </td>
                             </tr>
                         `;
