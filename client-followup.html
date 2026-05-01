@@ -13,7 +13,6 @@
             --border-color: #cbd5e1;
             --text-color: #2d3748;
             --danger-color: #c53030;
-            --warning-color: #dd6b20;
             --success-color: #22543d;
         }
 
@@ -39,6 +38,20 @@
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 25px;
+        }
+
+        .search-box {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
         }
 
         .form-row {
@@ -124,6 +137,10 @@
 <div class="container">
     <h2>متابعة التزامات وتواريخ العملاء</h2>
 
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="ابحث باسم العميل أو رقم التسجيل..." onkeyup="searchClients()">
+    </div>
+
     <div class="form-row">
         <div class="form-group">
             <label for="clientNameSelect">اسم العميل:</label>
@@ -178,7 +195,7 @@
     <button class="btn-action" onclick="addObligation()">إضافة التزام جديد</button>
 
     <div style="overflow-x: auto;">
-        <table>
+        <table id="followupTable">
             <thead>
                 <tr>
                     <th>اسم العميل</th>
@@ -201,8 +218,9 @@
 </div>
 
 <script>
+    let allObligations = [];
+
     document.addEventListener("DOMContentLoaded", function() {
-        // جلب أسماء العملاء من الـ LocalStorage
         const savedClients = JSON.parse(localStorage.getItem('rowadClients')) || [];
         const selectElement = document.getElementById('clientNameSelect');
         
@@ -213,6 +231,10 @@
             opt.textContent = c.name;
             selectElement.appendChild(opt);
         });
+        
+        // استدعاء البيانات المحفوظة (إن وجدت)
+        allObligations = JSON.parse(localStorage.getItem('clientObligations')) || [];
+        renderTable(allObligations);
     });
 
     function addObligation() {
@@ -228,24 +250,17 @@
             return;
         }
 
-        const tableBody = document.getElementById('followupTableBody');
-        
-        // إذا كان الجدول فارغاً، نحذف الرسالة
-        if (tableBody.querySelector('td[colspan="6"]')) {
-            tableBody.innerHTML = '';
-        }
+        const newRecord = {
+            clientName,
+            legalEntity,
+            taxNumber,
+            commercialExpiry,
+            obligationType
+        };
 
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-            <td><strong>${clientName}</strong></td>
-            <td>${legalEntity || 'غير محدد'}</td>
-            <td>${taxNumber || 'غير محدد'}</td>
-            <td>${commercialExpiry || 'غير محدد'}</td>
-            <td>${obligationType}</td>
-            <td><button onclick="this.closest('tr').remove()" style="background:#e53e3e; color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">حذف</button></td>
-        `;
-        
-        tableBody.appendChild(newRow);
+        allObligations.push(newRecord);
+        localStorage.setItem('clientObligations', JSON.stringify(allObligations));
+        renderTable(allObligations);
         alert('تم إضافة التزام جديد بنجاح!');
         
         // إعادة تعيين الحقول
@@ -253,6 +268,47 @@
         document.getElementById('taxNumber').value = '';
         document.getElementById('commercialExpiry').value = '';
         clientSelect.value = '';
+    }
+
+    function renderTable(data) {
+        const tableBody = document.getElementById('followupTableBody');
+        tableBody.innerHTML = '';
+
+        if (data.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="6" style="color: #a0aec0; padding:20px;">لا توجد التزامات مسجلة حالياً</td></tr>`;
+            return;
+        }
+
+        data.forEach((r, index) => {
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><strong>${r.clientName}</strong></td>
+                <td>${r.legalEntity || 'غير محدد'}</td>
+                <td>${r.taxNumber || 'غير محدد'}</td>
+                <td>${r.commercialExpiry || 'غير محدد'}</td>
+                <td>${r.obligationType}</td>
+                <td><button onclick="deleteRecord(${index})" style="background:#e53e3e; color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">حذف</button></td>
+            `;
+            tableBody.appendChild(newRow);
+        });
+    }
+
+    function deleteRecord(index) {
+        if (confirm('هل أنت متأكد من حذف هذا الالتزام؟')) {
+            allObligations.splice(index, 1);
+            localStorage.setItem('clientObligations', JSON.stringify(allObligations));
+            renderTable(allObligations);
+        }
+    }
+
+    // دالة البحث الشاملة
+    function searchClients() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = allObligations.filter(r => 
+            r.clientName.toLowerCase().includes(input) || 
+            (r.taxNumber && r.taxNumber.toLowerCase().includes(input))
+        );
+        renderTable(filtered);
     }
 </script>
 

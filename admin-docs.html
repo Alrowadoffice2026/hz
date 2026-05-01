@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مكتب الرواد - المستندات المؤمنة</title>
+    <title>المستندات</title>
     <style>
         :root {
             --primary-color: #1a365d;
@@ -37,6 +37,18 @@
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 25px;
+        }
+
+        .search-box {
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
         }
 
         .section-title {
@@ -157,12 +169,81 @@
         .nav-link:hover {
             text-decoration: underline;
         }
+
+        .secure-modal {
+            display: none;
+            position: fixed;
+            z-index: 200;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .secure-content {
+            background-color: #fff;
+            width: 85%;
+            max-width: 750px;
+            height: 75vh;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .secure-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .secure-body {
+            flex-grow: 1;
+            position: relative;
+            overflow: auto;
+            background-image: linear-gradient(rgba(26, 54, 93, 0.05), rgba(26, 54, 93, 0.05));
+        }
+
+        .watermark-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: rgba(0, 0, 0, 0.04);
+            font-weight: bold;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .viewer-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            user-select: none;
+        }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
 <div class="container">
-    <h2>إدارة مستندات العملاء (نظام الحماية والأمان)</h2>
+    <h2>إدارة المستندات)</h2>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="ابحث باسم العميل أو العنوان..." onkeyup="searchDocs()">
+    </div>
 
     <form id="clientDocsForm" onsubmit="addClientDocs(event)">
         <div class="section-title">رفع وتصنيف مستندات العملاء</div>
@@ -221,6 +302,22 @@
     <a href="dashboard-all.html" class="nav-link">العودة للوحة التحكم الرئيسية 🏠</a>
 </div>
 
+<div id="secureViewer" class="secure-modal">
+    <div class="secure-content">
+        <div class="secure-header">
+            <h4>استعراض المستند - مكتب الرواد (للاطلاع فقط)</h4>
+            <span class="close-btn" onclick="closeSecureViewer()">&times;</span>
+        </div>
+        <div class="secure-body">
+            <div class="watermark-overlay">
+                <div>مكتب الرواد للخدمات المحاسبية والضريبية</div>
+                <div>خاص بالعميل - غير مسموح بالتصوير</div>
+            </div>
+            <iframe id="docFrame" class="viewer-frame" src="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"></iframe>
+        </div>
+    </div>
+</div>
+
 <script>
     let clientDocs = [];
 
@@ -237,7 +334,9 @@
             clientSelect.appendChild(opt);
         });
         
-        updateClientTable();
+        // استرجاع المستندات
+        clientDocs = JSON.parse(localStorage.getItem('officeDocs')) || [];
+        updateClientTable(clientDocs);
     });
 
     function toggleClientSelection() {
@@ -251,7 +350,7 @@
         } else {
             clientGroup.style.display = 'none';
             clientSelect.removeAttribute('required');
-            clientSelect.value = ''; // تصفية الاختيار
+            clientSelect.value = '';
         }
     }
 
@@ -282,21 +381,23 @@
         };
 
         clientDocs.push(newDoc);
-        updateClientTable();
+        localStorage.setItem('officeDocs', JSON.stringify(clientDocs));
+        updateClientTable(clientDocs);
+        
         document.getElementById('clientDocsForm').reset();
         document.getElementById('clientSelectionGroup').style.display = 'none';
     }
 
-    function updateClientTable() {
+    function updateClientTable(data) {
         const tbody = document.querySelector('#clientDocsTable tbody');
         tbody.innerHTML = '';
         
-        if (clientDocs.length === 0) {
+        if (data.length === 0) {
             tbody.innerHTML = `<tr><td colspan="7" style="color: #718096; padding: 20px;">لا توجد ملفات مرفوعة حالياً</td></tr>`;
             return;
         }
         
-        clientDocs.forEach((doc, index) => {
+        data.forEach((doc, index) => {
             let visibilityBadge = '';
             
             if (doc.type === 'أساسي') {
@@ -313,10 +414,38 @@
                     <td>${doc.files}</td>
                     <td>${visibilityBadge}</td>
                     <td>${doc.date}</td>
-                    <td><button onclick="this.closest('tr').remove()" style="background:#e53e3e; color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">حذف</button></td>
+                    <td>
+                        <button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="viewSecureDoc()">استعراض</button>
+                        <button class="btn-danger" style="padding:4px 8px; font-size:11px; background:#e53e3e;" onclick="deleteDoc(${index})">حذف</button>
+                    </td>
                 </tr>
             `;
         });
+    }
+
+    function deleteDoc(index) {
+        if (confirm('هل أنت متأكد من حذف المستند؟')) {
+            clientDocs.splice(index, 1);
+            localStorage.setItem('officeDocs', JSON.stringify(clientDocs));
+            updateClientTable(clientDocs);
+        }
+    }
+
+    function searchDocs() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = clientDocs.filter(d => 
+            d.client.toLowerCase().includes(input) || 
+            d.title.toLowerCase().includes(input)
+        );
+        updateClientTable(filtered);
+    }
+
+    function viewSecureDoc() {
+        document.getElementById('secureViewer').style.display = 'flex';
+    }
+
+    function closeSecureViewer() {
+        document.getElementById('secureViewer').style.display = 'none';
     }
 </script>
 
