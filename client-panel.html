@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة العميل - مكتب الرواد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --accent-color: #3182ce;
+            --bg-color: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-color: #1a202c;
+            --text-muted: #4a5568;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        /* شاشة تسجيل الدخول للعميل */
+        #clientLoginScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            color: var(--primary-color);
+            margin-bottom: 24px;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+            background-color: #f8fafc;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        #loginError {
+            color: #c53030;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* لوحة تحكم العميل */
+        #clientDashboard {
+            display: none;
+            padding: 40px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .dash-header {
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+            color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dash-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 18px;
+            font-weight: 700;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .file-item {
+            padding: 12px 16px;
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .file-item a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .file-item a:hover {
+            text-decoration: underline;
+        }
+
+        .logout-btn {
+            display: inline-block;
+            background-color: #e2e8f0;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+
+        .logout-btn:hover {
+            background-color: #cbd5e1;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="clientLoginScreen">
+        <div class="login-card">
+            <h2>دخول العملاء - مكتب الرواد</h2>
+            <div class="form-group">
+                <label>اسم المستخدم (البريد الإلكتروني)</label>
+                <input type="text" id="clientUser" placeholder="أدخل البريد الإلكتروني الخاص بك">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="clientPass" placeholder="أدخل كلمة المرور">
+            </div>
+            <button class="login-btn" onclick="loginClient()">دخول</button>
+            <div id="loginError">بيانات الدخول غير صحيحة.</div>
+        </div>
+    </div>
+
+    <div id="clientDashboard">
+        <div class="dash-header">
+            <h1>أهلاً بك يا <span id="welcomeClientName">عميلنا العزيز</span></h1>
+            <p>مرحباً بك في منصة مكتب الرواد للخدمات المحاسبية والضريبية.</p>
+        </div>
+
+        <div class="section-card">
+            <h3>📄 نموذج التأسيس والأوراق الرسمية</h3>
+            <p>يمكنك استعراض وتحميل نماذج التأسيس الخاصة بك هنا:</p>
+            <ul class="file-list" id="clientDocList">
+                </ul>
+        </div>
+
+        <div class="section-card">
+            <h3>📁 الملفات العامة والمشتركة (للاطلاع فقط)</h3>
+            <ul class="file-list">
+                <li class="file-item">
+                    <span>دليل الإرشادات المحاسبية والضريبية</span>
+                    <a href="#" onclick="alert('ملف محمي - سيتم عرضه في نافذة آمنة')">استعراض</a>
+                </li>
+            </ul>
+        </div>
+
+        <a class="logout-btn" href="javascript:void(0)" onclick="logoutClient()">تسجيل الخروج 🔒</a>
+    </div>
+
+    <script>
+        let authenticatedClient = null;
+
+        function loginClient() {
+            const user = document.getElementById('clientUser').value;
+            const pass = document.getElementById('clientPass').value;
+
+            // جلب قاعدة بيانات العملاء المسجلين من اللوحة الرئيسية (LocalStorage)
+            const savedClients = JSON.parse(localStorage.getItem('rowadClients')) || [];
+
+            // البحث عن العميل
+            const client = savedClients.find(c => c.username === user && c.password === pass);
+
+            if (client) {
+                authenticatedClient = client;
+                document.getElementById('clientLoginScreen').style.display = 'none';
+                document.getElementById('clientDashboard').style.display = 'block';
+                document.getElementById('welcomeClientName').innerText = client.name;
+
+                // عرض ملفاته الخاصة من النظام
+                loadClientDocs(client.name);
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function loadClientDocs(clientName) {
+            const docList = document.getElementById('clientDocList');
+            docList.innerHTML = '';
+
+            // جلب المستندات المسجلة
+            const savedDocs = JSON.parse(localStorage.getItem('officeDocs')) || [];
+            const clientDocs = savedDocs.filter(d => d.client === clientName);
+
+            if (clientDocs.length === 0) {
+                docList.innerHTML = `<li class="file-item">لا توجد ملفات مرفوعة لشركتك حتى الآن.</li>`;
+            } else {
+                clientDocs.forEach(doc => {
+                    const li = document.createElement('li');
+                    li.className = 'file-item';
+                    li.innerHTML = `
+                        <span><strong>${doc.title}</strong> - (بتاريخ ${doc.date})</span>
+                        <a href="javascript:void(0)" onclick="alert('الملف: ${doc.files}')">استعراض وحفظ</a>
+                    `;
+                    docList.appendChild(li);
+                });
+            }
+        }
+
+        function logoutClient() {
+            authenticatedClient = null;
+            document.getElementById('clientDashboard').style.display = 'none';
+            document.getElementById('clientLoginScreen').style.display = 'flex';
+            document.getElementById('clientUser').value = '';
+            document.getElementById('clientPass').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
