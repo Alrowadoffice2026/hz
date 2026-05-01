@@ -13,363 +13,6 @@
             --border-color: #cbd5e1;
             --text-color: #2d3748;
             --danger-color: #c53030;
-            --warning-color: #dd6b20;
-            --success-color: #22543d;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-top: 4px solid var(--primary-color);
-        }
-
-        h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .search-box {
-            margin-bottom: 20px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 13px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .form-group {
-            flex: 1;
-            min-width: 220px;
-            position: relative;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 13px;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--accent-color);
-            outline: none;
-        }
-
-        /* قائمة الاقتراحات للبحث المباشر */
-        .autocomplete-list {
-            position: absolute;
-            z-index: 1000;
-            width: 100%;
-            max-height: 150px;
-            overflow-y: auto;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 0 0 6px 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: none;
-        }
-
-        .autocomplete-item {
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        .autocomplete-item:hover {
-            background-color: #edf2f7;
-        }
-
-        .btn-action {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .btn-action:hover {
-            background-color: var(--secondary-color);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        th, td {
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            font-size: 13px;
-        }
-
-        th {
-            background-color: #edf2f7;
-            color: var(--primary-color);
-        }
-
-        .nav-link {
-            display: block;
-            text-align: center;
-            margin-top: 25px;
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>متابعة التزامات وتواريخ العملاء</h2>
-
-    <div class="search-box">
-        <input type="text" id="mainSearchInput" placeholder="ابحث في الالتزامات المسجلة باسم العميل أو رقم التسجيل..." onkeyup="searchObligations()">
-    </div>
-
-    <div class="form-row">
-        <div class="form-group">
-            <label for="searchableClient">اسم العميل (اكتب للبحث السريع):</label>
-            <input type="text" id="searchableClient" placeholder="ابحث عن اسم العميل..." onfocus="showClientList()" oninput="filterClientList()" autocomplete="off">
-            <div id="clientListBox" class="autocomplete-list"></div>
-        </div>
-        <div class="form-group">
-            <label for="legalEntity">الكيان القانوني:</label>
-            <input type="text" id="legalEntity" placeholder="شركة فردية، ذات مسؤولية محدودة...">
-        </div>
-        <div class="form-group">
-            <label for="foundingDate">تاريخ التأسيس:</label>
-            <input type="date" id="foundingDate">
-        </div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-group">
-            <label for="taxNumber">رقم التسجيل الضريبي:</label>
-            <input type="text" id="taxNumber" placeholder="xxx-xxx-xxx">
-        </div>
-        <div class="form-group">
-            <label for="taxOffice">المأمورية الضريبية:</label>
-            <input type="text" id="taxOffice" placeholder="مثال: الاستثمار / المهن الحرة">
-        </div>
-        <div class="form-group">
-            <label for="activityCode">كود النشاط:</label>
-            <input type="text" id="activityCode" placeholder="مثال: 45001">
-        </div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-group">
-            <label for="taxCardExpiry">انتهاء البطاقة الضريبية:</label>
-            <input type="date" id="taxCardExpiry">
-        </div>
-        <div class="form-group">
-            <label for="commercialExpiry">انتهاء السجل التجاري:</label>
-            <input type="date" id="commercialExpiry">
-        </div>
-        <div class="form-group">
-            <label for="obligationType">نوع الالتزام:</label>
-            <select id="obligationType">
-                <option value="إقرار شهري">إقرار شهري (قيمة مضافة)</option>
-                <option value="إقرار سنوي">إقرار سنوي (أرباح تجارية وصناعية)</option>
-                <option value="تأمين اجتماعي">تأمين اجتماعي / رواتب</option>
-            </select>
-        </div>
-    </div>
-
-    <button class="btn-action" onclick="addObligation()">إضافة التزام جديد</button>
-
-    <div style="overflow-x: auto;">
-        <table id="followupTable">
-            <thead>
-                <tr>
-                    <th>اسم العميل</th>
-                    <th>الكيان</th>
-                    <th>رقم الضريبي</th>
-                    <th>انتهاء السجل</th>
-                    <th>الالتزام</th>
-                    <th>الإجراء</th>
-                </tr>
-            </thead>
-            <tbody id="followupTableBody">
-                <tr>
-                    <td colspan="6" style="color: #a0aec0;">لا توجد التزامات مسجلة حالياً</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <a href="dashboard-all.html" class="nav-link">العودة للوحة التحكم الرئيسية 🏠</a>
-</div>
-
-<script>
-    let allObligations = [];
-    let savedClientsList = [];
-
-    document.addEventListener("DOMContentLoaded", function() {
-        // جلب قائمة العملاء المسجلين
-        savedClientsList = JSON.parse(localStorage.getItem('rowadClients')) || [];
-        
-        // استرجاع البيانات
-        allObligations = JSON.parse(localStorage.getItem('clientObligations')) || [];
-        renderTable(allObligations);
-        
-        // إغلاق القائمة عند النقر خارج الحقل
-        document.addEventListener('click', function(e) {
-            if (e.target.id !== 'searchableClient') {
-                document.getElementById('clientListBox').style.display = 'none';
-            }
-        });
-    });
-
-    function showClientList() {
-        const box = document.getElementById('clientListBox');
-        box.style.display = 'block';
-        renderClientList(savedClientsList);
-    }
-
-    function filterClientList() {
-        const value = document.getElementById('searchableClient').value.toLowerCase();
-        const filtered = savedClientsList.filter(c => c.name.toLowerCase().includes(value));
-        renderClientList(filtered);
-    }
-
-    function renderClientList(data) {
-        const box = document.getElementById('clientListBox');
-        box.innerHTML = '';
-        
-        if (data.length === 0) {
-            box.innerHTML = `<div class="autocomplete-item" style="color:#718096">لا يوجد عميل بهذا الاسم</div>`;
-            return;
-        }
-        
-        data.forEach(c => {
-            const item = document.createElement('div');
-            item.className = 'autocomplete-item';
-            item.innerText = c.name;
-            item.onclick = function() {
-                document.getElementById('searchableClient').value = c.name;
-                box.style.display = 'none';
-            };
-            box.appendChild(item);
-        });
-    }
-
-    function addObligation() {
-        const clientName = document.getElementById('searchableClient').value;
-        const legalEntity = document.getElementById('legalEntity').value;
-        const taxNumber = document.getElementById('taxNumber').value;
-        const commercialExpiry = document.getElementById('commercialExpiry').value;
-        const obligationType = document.getElementById('obligationType').value;
-
-        if (!clientName) {
-            alert('يرجى كتابة أو اختيار اسم العميل أولاً.');
-            return;
-        }
-
-        const newRecord = {
-            clientName,
-            legalEntity,
-            taxNumber,
-            commercialExpiry,
-            obligationType
-        };
-
-        allObligations.push(newRecord);
-        localStorage.setItem('clientObligations', JSON.stringify(allObligations));
-        renderTable(allObligations);
-        alert('تم إضافة التزام جديد بنجاح!');
-        
-        // إعادة تعيين الحقول
-        document.getElementById('searchableClient').value = '';
-        document.getElementById('legalEntity').value = '';
-        document.getElementById('taxNumber').value = '';
-        document.getElementById('commercialExpiry').value = '';
-    }
-
-    function renderTable(data) {
-        const tableBody = document.getElementById('followupTableBody');
-        tableBody.innerHTML = '';
-
-        if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="6" style="color: #a0aec0; padding:20px;">لا توجد التزامات مسجلة حالياً</td></tr>`;
-            return;
-        }
-
-        data.forEach((r, index) => {
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td><strong>${r.clientName}</strong></td>
-                <td>${r.legalEntity || 'غير محدد'}</td>
-                <td>${r.taxNumber || 'غير محدد'}</td>
-                <td>${r.commercialExpiry || 'غير محدد'}</td>
-                <td>${r.obligationType}</td>
-                <td><button onclick="deleteRecord(${index})" style="background:#e53e3e; color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">حذف</button></td>
-            `;
-            tableBody.appendChild(newRow);
-        });
-    }
-
-    function deleteRecord(index) {
-        if (confirm('هل أنت متأكد من حذف هذا الالتزام؟')) {
-            allObligations.splice(index, 1);
-            localStorage.setItem('clientObligations', JSON.stringify(allObligations));
-            renderTable(allObligations);
-        }
-    }
-
-    function searchObligations() {<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مكتب الرواد - متابعة التزامات وتواريخ العملاء</title>
-    <style>
-        :root {
-            --primary-color: #1a365d;
-            --secondary-color: #2b6cb0;
-            --accent-color: #3182ce;
-            --bg-color: #f8f9fa;
-            --border-color: #cbd5e1;
-            --text-color: #2d3748;
-            --danger-color: #c53030;
             --success-color: #22543d;
         }
 
@@ -491,7 +134,7 @@
             font-weight: bold;
         }
 
-        .btn-action, .btn-secondary {
+        .btn-action, .btn-secondary, .btn-clear {
             color: white;
             padding: 12px 20px;
             border: none;
@@ -523,14 +166,24 @@
             background-color: #38a169;
         }
 
+        .btn-clear {
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-clear:hover {
+            background-color: #cbd5e1;
+        }
+
         .btn-danger {
             background-color: #e53e3e;
             color: white;
             border: none;
-            padding: 6px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             margin-top: 5px;
         }
@@ -543,10 +196,10 @@
             background-color: var(--secondary-color);
             color: white;
             border: none;
-            padding: 6px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             margin-top: 5px;
             margin-left: 4px;
@@ -726,6 +379,7 @@
         </div>
 
         <button type="submit" class="btn-action" id="submitBtn">حفظ بيانات ومتابعة العميل</button>
+        <button type="button" class="btn-clear" onclick="clearAllData()">تفريغ البيانات بالكامل 🗑️</button>
     </form>
 
     <div class="table-responsive">
@@ -744,7 +398,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="8" style="color: #718096; padding: 20px;">لا توجد بيانات مسجلة حالياً</td>
+                    <td colspan="8" style="text-align: center; color: #718096; padding: 20px;">لا توجد بيانات مسجلة حالياً</td>
                 </tr>
             </tbody>
         </table>
@@ -763,6 +417,7 @@
         
         updateTable(clientRecords);
 
+        // إغلاق قائمة البحث عند النقر خارجها
         document.addEventListener('click', function(e) {
             if (e.target.id !== 'searchableClient') {
                 document.getElementById('clientListBox').style.display = 'none';
@@ -865,6 +520,15 @@
             clientRecords.splice(index, 1);
             localStorage.setItem('clientFollowupRecords', JSON.stringify(clientRecords));
             updateTable(clientRecords);
+        }
+    }
+
+    function clearAllData() {
+        if (confirm('هل أنت متأكد من تفريغ جميع البيانات بالكامل؟')) {
+            clientRecords = [];
+            localStorage.setItem('clientFollowupRecords', JSON.stringify(clientRecords));
+            updateTable(clientRecords);
+            alert('تم تفريغ البيانات بنجاح.');
         }
     }
 
@@ -999,17 +663,6 @@
             (r.taxNumber && r.taxNumber.toLowerCase().includes(input))
         );
         updateTable(filtered);
-    }
-</script>
-
-</body>
-</html>
-        const input = document.getElementById('mainSearchInput').value.toLowerCase();
-        const filtered = allObligations.filter(r => 
-            r.clientName.toLowerCase().includes(input) || 
-            (r.taxNumber && r.taxNumber.toLowerCase().includes(input))
-        );
-        renderTable(filtered);
     }
 </script>
 
