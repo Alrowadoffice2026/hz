@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتب الرواد - تسجيل بيانات الشركة</title>
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --accent-color: #3182ce;
+            --bg-color: #f8f9fa;
+            --border-color: #cbd5e1;
+            --text-color: #2d3748;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            /* الشعار كعلامة مائية في الخلفية */
+            background-image: url('https://blogger.googleusercontent.com/img/a/AVvXsEh4hJ4vB-t6l_gq9_W3C_I7wT8oG_3gL_w8n1V_s5M0qK6U019F_fMv3h1W7771_0nL5P-4o9u0w8E0z6x9Z653p5W-3A_t2_1h4y6h0x6_6y8Y_7h3W_5x4P_6z4_m6t2_');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            background-size: 350px;
+            background-color: rgba(248, 249, 250, 0.95);
+            background-blend-mode: overlay;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-top: 5px solid var(--secondary-color);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            color: var(--secondary-color);
+            margin: 20px 0 12px 0;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 260px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 13px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        /* شريط الأزرار */
+        .buttons-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #ebf8ff;
+            padding: 12px;
+            border-radius: 6px;
+            border-right: 4px solid var(--accent-color);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-modal {
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-modal:hover {
+            background-color: #2b6cb0;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 650px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: left;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-title {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 8px;
+        }
+
+        /* الجدول */
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            min-width: 700px;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #edf2f7;
+            color: var(--primary-color);
+            font-size: 12px;
+        }
+
+        td input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        td input:disabled {
+            background-color: #edf2f7;
+        }
+
+        .btn-add, .btn-remove {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .btn-add {
+            background-color: var(--secondary-color);
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-remove {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        button[type="submit"] {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .alert-message {
+            color: #c53030;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>مكتب الرواد - تسجيل بيانات الشركة</h2>
+
+    <div class="buttons-bar">
+        <span style="font-size: 13px; font-weight: 600; margin-left: 15px;">استعراض الملفات:</span>
+        <button class="btn-modal" onclick="openModal('modal1')">📄 الشروط الخاصة بالأسماء</button>
+        <button class="btn-modal" onclick="openModal('modal2')">📄 أنشطة قانون الاستثمار 72</button>
+        <button class="btn-modal" onclick="openModal('modal3')">📄 الأنشطة التي تحتاج لغرف</button>
+    </div>
+
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal1')">&times;</span>
+            <h4 class="modal-title">الشروط والضوابط الخاصة بالأسماء التجارية</h4>
+            <div style="font-size: 12px; text-align: right; line-height: 1.6;">
+                <ol>
+                    <li>اسم شركة الشخص الواحد يجب أن يُشتق من اسم صاحب الشركة أو من النشاط.</li>
+                    <li>اسم الشركات ذات المسئولية المحدودة يمكن أن يُشتق من اسم أحد الشركاء بالشركة بشرط أن يكون مذكوراً في إثبات الشخصية الخاص به، ولا يتم الاعتماد على أسماء الشهرة غير المذكورة بإثبات الشخصية.</li>
+                    <li>اسم الشركات المساهمة يجب أن يُشتق من أحد أنشطة الشركة، ويمكن أن يتضمن أسماء أحد المساهمين بالشركة (وليس المكتتبين) بشرط أن يكون الاسم مذكوراً في إثبات الشخصية الخاصة به، ولا يتم الاعتماد على أسماء الشهرة.</li>
+                    <li>في حالة الشركات الخاضعة لأحكام قانون الاستثمار يجب أن يُشتق النشاط من أحد أنشطة قانون الاستثمار الواردة بالمادة الأولى من الباب الأول من اللائحة التنفيذية لقانون الاستثمار.</li>
+                    <li>لا يجوز إدراج أسماء الله الحسنى، كافة ألقاب الأنبياء والرسل عليهم السلام جميعاً (مثل الخليل، كليم الله).</li>
+                    <li>جميع ألقاب النبي محمد (المدثر، المزمل، الماحي، الحاشر، العاقب)، وكلمات مثل: الإسلام، المسلم، المسلمة، الصحابة.</li>
+                    <li>أسماء الملائكة أو ألقابهم (جبريل، ميكائيل، إسرافيل، ملك السماء، ملك الوحي، ملك الجبال).</li>
+                    <li>كافة ألقاب المسيح عليه السلام وأمه مريم البتول عليهما السلام، الراعي الصالح، البتول، أم النور، المخلص.</li>
+                    <li>المكتبة الأزهرية، الأزهر، الأزهرية، القرآن، القرآنية.</li>
+                    <li>الإنجيل، الإنجيلية، المقدس، القداسة، القديس، سان، سانت.</li>
+                    <li>كنيسة، إنجيلية، منظمة، المنظمة، المجلس الـ.</li>
+                    <li>اشتراط إضافة لفظ شركة قبل (اتحاد، مجموعة، نادي).</li>
+                    <li>أسماء العلم وألقاب العائلات يشترط أن تُشتق من اسم أحد الشركاء في الشركات ذات المسئولية المحدودة أو أحد المؤسسين في حالة المساهمة.</li>
+                    <li>أبناء أو آل إذا لم يكن الشركاء يحملوا نفس الكنية أو اللقب.</li>
+                    <li>الأسماء المخالفة للنظام العام والآداب العامة (مخدر، مخدرات، خمور، ويسكي بار، عاهرة، عهر).</li>
+                    <li>الأسماء السياسية مثل (حزب، تنظيم، جماعة، الجيش).</li>
+                    <li>لفظ وطنية، والوطنية، والوطني.</li>
+                    <li>الأسماء التجارية المشتقة من رتب أفراد الشرطة أو القوات المسلحة (رائد، لواء، فريق).</li>
+                    <li>عدم مطابقة الاسم باللغة العربية مع اسمها باللغة الإنجليزية.</li>
+                    <li>لفظ بنك سواء بالعربية أو بالإنجليزية في حالة عدم خضوع الشركة لإحدى أنشطة البنوك.</li>
+                    <li>نشاط إلحاق العمالة يجب أن يُشتق من اسم الشركة وأن يكون الشكل القانوني المسموح به هو شركة ذات مسؤولية محدودة أو شركة مساهمة مصرية.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal2')">&times;</span>
+            <h4 class="modal-title">الأنشطة الخاضعة لقانون الاستثمار رقم 72 لسنة 2017</h4>
+            <div style="font-size: 12px; text-align: right; line-height: 1.6;">
+                <ul>
+                    <li><strong>الأنشطة الصناعية:</strong> تحويل المواد والخامات وتغيير هيئتها بمزجها أو خلطها أو معالجتها أو تشكيلها أو تعبئتها، وتجميع الأجزاء والمكونات وتركيبها لإنتاج منتجات وسيطة أو نهائية (لا يشمل ذلك صناعة الدخان والتمباك والتبغ والمعسل والنشوق، والمشروبات الكحولية والخمور).</li>
+                    <li><strong>الهندسة وتصنيع الآلات:</strong> تصميم أو تصنيع الآلات والمعدات الصناعية وخطوط الإنتاج وإدارة التنفيذ أو إعادة الهيكلة للمصانع، أعمال التصميمات الهندسية، إعداد النماذج والقوالب، وإنتاج المعدات.</li>
+                    <li><strong>صناعة السينما:</strong> إقامة أو استئجار استوديوهات أو معامل الإنتاج السينمائي أو دور العرض وتشغيلها.</li>
+                    <li><strong>التنمية الصناعية المتكاملة:</strong> للمناطق الصناعية من إعداد الدراسات الاقتصادية وإنشاء البنية الأساسية وتسويق الأراضي وإنشاء مبانٍ جاهزة.</li>
+                    <li><strong>الزراعة والإنتاج الحيواني والداجني والسمكي:</strong> استصلاح واستزراع الأراضي البور أو الصحراوية باستخدام طرق الري الحديثة (وليس الغمر), تربية الحيوانات والطيور والخيول والمزارع السمكية، والهندسة الوراثية في المجالات النباتية والحيوانية.</li>
+                    <li><strong>التجارة الداخلية:</strong> المراكز التجارية، تجارة الجملة، تجارة التجزئة، وسلاسل الإمداد (بشرط أن تتخذ شكل شركة مساهمة مصرية، ويستثنى المناطق النائية والمجتمعات العمرانية الجديدة).</li>
+                    <li><strong>التعليم:</strong> إنشاء وإدارة وتشغيل المدارس ومعاهد التعليم الفني والجامعات.</li>
+                    <li><strong>الصحة:</strong> إقامة المستشفيات والمراكز الطبية والعلاجية (بشرط تقديم 10% سنوياً بالمجان من عدد الأسرة).</li>
+                    <li><strong>النقل:</strong> النقل الجماعي داخل ومن وإلى المدن الجديدة، النقل النهري والبحري والساحلي للسفن التي تعمل تحت العلم المصرى ولأعالي البحار، النقل الجوي والخدمات المرتبطة به، النقل البري للبضائع بما في ذلك العابر للحدود، والنقل المبرد للبضائع وحفظ وتخزين الغلال.</li>
+                    <li><strong>السياحة:</strong> الفنادق ويخوت السفاري والشقق الفندقية والقرى (بمستوى لا يقل عن 3 نجوم), المخيمات السياحية، الوسائل المخصصة لنقل السياح، مشروعات التنمية السياحية المتكاملة، ومشروعات المراسى النيلية.</li>
+                    <li><strong>الإسكان والتشييد والبناء:</strong> مشروعات الإسكان الاجتماعي ومشروعات الإسكان الموجهة لمحدودي الدخل، البنية الأساسية من مياه شرب وصرف صحي وكهرباء وطرق واتصالات وجراجات متعددة الطوابق ومحطات طلمبات الري، تخطيط وتنمية المناطق العمرانية والصناعية.</li>
+                    <li><strong>الرياضة والكهرباء والطاقة:</strong> الأكاديميات الرياضية، الأندية الصحية ومراكز اللياقة البدنية، وتوليد ونقل وتوزيع الكهرباء والطاقة.</li>
+                    <li><strong>البترول والثروات الطبيعية:</strong> الخدمات البترولية المساندة لعمليات الحفر والاستكشاف، إقامة محطات استقبال الغاز الطبيعي وإعداده للتوزيع، الأنشطة المرتبطة بالملاحات الطبيعية أو الصناعية أو الملح الصخري والمياه.</li>
+                    <li><strong>الاتصالات وتكنولوجيا المعلومات:</strong> صناعة تكنولوجيا المعلومات، تصميم وإنتاج البرامج، إنتاج المحتوى الإلكتروني، تصميم وإنتاج معدات الحاسبات الآلية، شبكات نقل الصوت والصورة والبيانات، المشروعات التي تستثمر في تطوير حقوق الملكية الفكرية، وحاضنات الأعمال.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal3" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal3')">&times;</span>
+            <h4 class="modal-title">الأنشطة التي تحتاج موافقات غرف الصناعة</h4>
+            <div style="font-size: 12px; text-align: right; line-height: 1.6;">
+                <ul>
+                    <li><strong>غرفة الصناعات الهندسية:</strong> الأجهزة الكهربائية المنزلية, الصناعات المعدنية والهياكل, المعدات والآلات الصناعية, الإلكترونيات والعدادات.</li>
+                    <li><strong>غرفة صناعة الأدوية ومستحضرات التجميل:</strong> الأدوية البشرية والبيطرية, المستحضرات الطبية والتجميلية, والمستلزمات الطبية.</li>
+                    <li><strong>غرفة صناعة الأخشاب والأثاث:</strong> الأثاث المنزلي والمكتبي, الأبواب والنوافذ الخشبية, مستلزمات النجارة والديكور.</li>
+                    <li><strong>غرفة صناعة الطباعة والتغليف:</strong> الطباعة التجارية والرقمية, التعبئة والتغليف الورقي والبلاستيكي, ومستلزمات الطباعة.</li>
+                    <li><strong>غرفة صناعة تكنولوجيا المعلومات:</strong> البرمجيات والحلول الرقمية, مراكز البيانات وخدمات الإنترنت, الأجهزة الذكية والتقنيات الحديثة.</li>
+                    <li><strong>غرفة صناعة الحرف اليدوية:</strong> المشغولات اليدوية والتراثية, التطريز, الفخار, الزجاج اليدوي, الصناعات البيئية والريفية.</li>
+                    <li><strong>غرفة مقدمي خدمات الرعاية الصحية:</strong> المستشفيات والمراكز الطبية, معامل التحاليل والأشعة, خدمات الرعاية المنزلية.</li>
+                    <li><strong>غرفة صناعة الحبوب ومنتجاتها:</strong> طحن القمح والدقيق, المكرونة, المخبوزات, النشا, منتجات الذرة والسميد.</li>
+                    <li><strong>غرفة صناعة مواد البناء:</strong> السيراميك, الجرانيت, الرخام, الأسمنت, الطوب, الأدوات الصحية, المواسير, المنتجات الخرسانية, المحاجر, المواد العازلة والخزفيات.</li>
+                    <li><strong>غرفة صناعة الذهب والمجوهرات:</strong> تصنيع المشغولات الذهبية والفضية, تصميم المجوهرات, تجارة الأحجار الكريمة والمعادن النفيسة.</li>
+                    <li><strong>غرفة صناعة الملابس الجاهزة:</strong> الملابس الجاهزة بأنواعها, المفروشات المنزلية, مستلزمات إنتاج الملابس والمفروشات.</li>
+                    <li><strong>غرفة الصناعات النسجية:</strong> غزل ونسج القطن والصوف, الألياف الصناعية وخيوط البوليستر, الصباغة والطباعة والتجهيز, ملابس التريكو, السجاد, الموكيت.</li>
+                    <li><strong>غرفة الصناعات الكيماوية:</strong> البويات, الأحبار, الراتنجات, البلاستيك المطاط, الكاوتش, الأسمدة, المبيدات, المنظفات, الزجاج, البطاريات, الفحم, والغازات الصناعية.</li>
+                    <li><strong>غرفة صناعات البترول والتعدين:</strong> البحث وتنمية وإنتاج البترول, التكرير, البتروكيماويات, المناجم, المحاجر, الملاحات, والخدمات الفنية البترولية.</li>
+                    <li><strong>غرفة الصناعات الغذائية:</strong> اللحوم, الألبان, العصائر, الزيوت, الحاصلات الزراعية, الأغذية الخاصة, السكر, الشوكولاتة, الخميرة, الأعلاف, المجازر, ومخازن التبريد.</li>
+                    <li><strong>غرفة صناعة الجلود:</strong> الأحذية, المنتجات الجلدية, مستلزمات الإنتاج الجلدي, ودباغة الجلود بجميع أنواعها.</li>
+                    <li><strong>غرفة صناعة التطوير العقاري:</strong> التنمية المتكاملة سكنية تجارية صناعية, الاستثمار العقاري, تنمية عمرانية, تطوير مطارات وموانئ.</li>
+                    <li><strong>غرفة صناعة السينما:</strong> إنتاج وتوزيع الأفلام, استوديوهات التصوير والمونتاج, خدمات ما بعد الإنتاج.</li>
+                    <li><strong>غرفة الصناعات المعدنية:</strong> الحديد والصلب, الألومنيوم والمعادن غير الحديدية, تشكيل المعادن والسباكة.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <form id="clientDataForm" onsubmit="return validateTotal(event)">
+        
+        <div class="section-title">1. البيانات الأساسية للشركة</div>
+        
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyActivity">النشاط المقترح للشركة:</label>
+                    <input type="text" id="companyActivity" required placeholder="أدخل النشاط الأساسي للشركة">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyNameAr1">الاسم التجاري (1 - عربي):</label>
+                    <input type="text" id="companyNameAr1" required placeholder="الاسم الأول المقترح">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyNameEn1">الاسم التجاري (1 - إنجليزي):</label>
+                    <input type="text" id="companyNameEn1" required placeholder="Proposed Name 1">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyNameAr2">الاسم التجاري (2 - عربي - اختياري):</label>
+                    <input type="text" id="companyNameAr2" placeholder="الاسم الثاني المقترح">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyEn2">الاسم التجاري (2 - إنجليزي - اختياري):</label>
+                    <input type="text" id="companyEn2" placeholder="Proposed Name 2">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyNameAr3">الاسم التجاري (3 - عربي - اختياري):</label>
+                    <input type="text" id="companyNameAr3" placeholder="الاسم الثالث المقترح">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyEn3">الاسم التجاري (3 - إنجليزي - اختياري):</label>
+                    <input type="text" id="companyEn3" placeholder="Proposed Name 3">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyNameAr4">الاسم التجاري (4 - عربي - اختياري):</label>
+                    <input type="text" id="companyNameAr4" placeholder="الاسم الرابع المقترح">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyEn4">الاسم التجاري (4 - إنجليزي - اختياري):</label>
+                    <input type="text" id="companyNameEn4" placeholder="Proposed Name 4">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyNameAr5">الاسم التجاري (5 - عربي - اختياري):</label>
+                    <input type="text" id="companyNameAr5" placeholder="الاسم الخامس المقترح">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyEn5">الاسم التجاري (5 - إنجليزي - اختياري):</label>
+                    <input type="text" id="companyEn5" placeholder="Proposed Name 5">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyType">نوع الشركة:</label>
+                    <select id="companyType" required>
+                        <option value="">اختر النوع...</option>
+                        <option value="ذ.م.م">شركة ذات مسؤولية محدودة (ذ.م.م)</option>
+                        <option value="مساهمة">شركة مساهمة</option>
+                        <option value="شخص واحد">شركة الشخص الواحد</option>
+                        <option value="تضامن">شركة تضامن</option>
+                        <option value="توصية بسيطة">شركة توصية بسيطة</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="legalLaw">القانون التابع لها:</label>
+                    <select id="legalLaw" required>
+                        <option value="">اختر القانون...</option>
+                        <option value="72 لسنة 2017">قانون الاستثمار رقم 72 لسنة 2017</option>
+                        <option value="159 لسنة 1981">قانون شركات المساهمة رقم 159 لسنة 1981</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyAddress">عنوان الشركة:</label>
+                    <input type="text" id="companyAddress" required placeholder="أدخل عنوان المقر الرئيسي">
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="companyPhone">رقم الهاتف:</label>
+                    <input type="tel" id="companyPhone" required placeholder="01xxxxxxxxx">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">2. الإدارة ومن له حق التوقيع</div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="authorizedSignatory">من له حق التوقيع والإدارة:</label>
+                    <textarea id="authorizedSignatory" rows="2" placeholder="اسم المفوض بالتوقيع ورقم بطاقته..." required></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">3. الهيكل المالي للشركة</div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="totalCapital">إجمالي رأس المال (جم):</label>
+                    <input type="number" id="totalCapital" placeholder="أدخل إجمالي رأس مال الشركة" oninput="recalculateAll()" required>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="fixedShareValue">قيمة الحصة الواحدة الثابتة (جم):</label>
+                    <input type="number" id="fixedShareValue" placeholder="أدخل قيمة الحصة الواحدة" oninput="recalculateAll()" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">اسم الشريك</th>
+                        <th style="width: 15%;">الرقم القومي</th>
+                        <th style="width: 10%;">عدد الحصص</th>
+                        <th style="width: 15%;">إجمالي القيمة (جم)</th>
+                        <th style="width: 10%;">النسبة (%)</th>
+                        <th style="width: 22%;">العنوان</th>
+                        <th style="width: 8%;">إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="partnersTableBody">
+                    <tr>
+                        <td><input type="text" placeholder="اسم الشريك" required></td>
+                        <td><input type="text" placeholder="الرقم القومي" required></td>
+                        <td><input type="number" placeholder="0" class="shares" oninput="calculateRow(this)" required></td>
+                        <td><input type="number" placeholder="0" class="totalValue" disabled></td>
+                        <td><input type="number" placeholder="0" class="percentage" disabled></td>
+                        <td><input type="text" placeholder="العنوان" required></td>
+                        <td><button type="button" class="btn-remove" onclick="removeRow(this)">حذف</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="validationWarning" class="alert-message">مجموع النسب يجب أن يساوي 100% تماماً، ومجموع الحصص لا يجوز أن يتجاوز رأس المال!</div>
+        <button type="button" class="btn-add" onclick="addRow()">+ إضافة شريك جديد</button>
+
+        <button type="submit">حفظ وإرسال البيانات إلى المكتب</button>
+    </form>
+</div>
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modals = document.getElementsByClassName('modal');
+        for (let i = 0; i < modals.length; i++) {
+            if (event.target == modals[i]) {
+                modals[i].style.display = "none";
+            }
+        }
+    }
+
+    function addRow() {
+        const tbody = document.getElementById('partnersTableBody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" placeholder="اسم الشريك" required></td>
+            <td><input type="text" placeholder="الرقم القومي" required></td>
+            <td><input type="number" placeholder="0" class="shares" oninput="calculateRow(this)" required></td>
+            <td><input type="number" placeholder="0" class="totalValue" disabled></td>
+            <td><input type="number" placeholder="0" class="percentage" disabled></td>
+            <td><input type="text" placeholder="العنوان" required></td>
+            <td><button type="button" class="btn-remove" onclick="removeRow(this)">حذف</button></td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    function removeRow(button) {
+        const row = button.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+        recalculateAll();
+    }
+
+    function calculateRow(input) {
+        const row = input.parentNode.parentNode;
+        const shares = parseFloat(row.querySelector('.shares').value) || 0;
+        const fixedShareValue = parseFloat(document.getElementById('fixedShareValue').value) || 0;
+        const totalCapital = parseFloat(document.getElementById('totalCapital').value) || 0;
+        const totalValueInput = row.querySelector('.totalValue');
+
+        if ((shares * fixedShareValue) > totalCapital) {
+            alert('تنبيه: إجمالي قيمة حصص هذا الشريك يتجاوز إجمالي رأس المال! سيتم تصحيح الإدخال.');
+            row.querySelector('.shares').value = 0;
+            totalValueInput.value = 0;
+            recalculateAll();
+            return;
+        }
+
+        const total = shares * fixedShareValue;
+        totalValueInput.value = Math.round(total);
+        recalculateAll();
+    }
+
+    function recalculateAll() {
+        const totalCapitalInput = document.getElementById('totalCapital').value;
+        const totalCapital = parseFloat(totalCapitalInput) || 0;
+
+        let totalValueSum = 0;
+        document.querySelectorAll('.totalValue').forEach(function(el) {
+            totalValueSum += parseFloat(el.value) || 0;
+        });
+
+        if (totalValueSum > totalCapital) {
+            document.getElementById('validationWarning').style.display = 'block';
+        } else {
+            document.getElementById('validationWarning').style.display = 'none';
+        }
+
+        document.querySelectorAll('.percentage').forEach(function(el) {
+            const r = el.parentNode.parentNode;
+            const t = parseFloat(r.querySelector('.totalValue').value) || 0;
+
+            if (totalCapital > 0) {
+                el.value = ((t / totalCapital) * 100).toFixed(2);
+            } else {
+                el.value = 0;
+            }
+        });
+    }
+
+    function validateTotal(event) {
+        event.preventDefault();
+
+        let totalPercentage = 0;
+        document.querySelectorAll('.percentage').forEach(function(el) {
+            totalPercentage += parseFloat(el.value) || 0;
+        });
+
+        if (Math.abs(totalPercentage - 100) > 0.01) {
+            document.getElementById('validationWarning').style.display = 'block';
+            return false;
+        }
+
+        document.getElementById('validationWarning').style.display = 'none';
+        alert('تم التحقق من صحة البيانات بنجاح وجاري الحفظ!');
+        return true;
+    }
+</script>
+
+</body>
+</html>

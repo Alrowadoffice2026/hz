@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتب الرواد - المستندات المؤمنة</title>
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --accent-color: #3182ce;
+            --bg-color: #f8f9fa;
+            --border-color: #cbd5e1;
+            --text-color: #2d3748;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            background-image: url('https://blogger.googleusercontent.com/img/a/AVvXsEh4hJ4vB-t6l_gq9_W3C_I7wT8oG_3gL_w8n1V_s5M0qK6U019F_fMv3h1W7771_0nL5P-4o9u0w8E0z6x9Z653p5W-3A_t2_1h4y6h0x6_6y8Y_7h3W_5x4P_6z4_m6t2_');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            background-size: 350px;
+            background-color: rgba(248, 249, 250, 0.95);
+            background-blend-mode: overlay;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            color: var(--secondary-color);
+            margin: 20px 0 15px 0;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 13px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        .note-text {
+            color: #c53030;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        button.btn-action {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+
+        button.btn-action:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            min-width: 700px;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: #edf2f7;
+            color: var(--primary-color);
+        }
+
+        .badge-client {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .badge-all {
+            background-color: #c6f6d5;
+            color: #22543d;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .secure-modal {
+            display: none;
+            position: fixed;
+            z-index: 200;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .secure-content {
+            background-color: #fff;
+            width: 85%;
+            max-width: 750px;
+            height: 75vh;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .secure-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .secure-body {
+            flex-grow: 1;
+            position: relative;
+            overflow: auto;
+            background-image: linear-gradient(rgba(26, 54, 93, 0.05), rgba(26, 54, 93, 0.05));
+        }
+
+        .watermark-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: rgba(0, 0, 0, 0.04);
+            font-weight: bold;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .viewer-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<div class="container">
+    <h2>إدارة مستندات العملاء (نظام الحماية والأمان)</h2>
+
+    <form id="clientDocsForm" onsubmit="addClientDocs(event)">
+        <div class="section-title">رفع وتصنيف مستندات العملاء</div>
+        
+        <div class="form-group">
+            <label for="docType">نوع الملف / المستند:</label>
+            <select id="docType" onchange="toggleClientSelection()" required>
+                <option value="">اختر نوع الملف...</option>
+                <option value="أساسي">ملفات أساسية (مخصصة لعميل معين)</option>
+                <option value="عام">ملفات عامة (مرئية للجميع - للاطلاع فقط)</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="clientSelectionGroup" style="display: none;">
+            <label for="selectedClient">اسم العميل:</label>
+            <select id="selectedClient">
+                <option value="">اختر العميل...</option>
+                <option value="شركة الرواد للتجارة والصناعة">شركة الرواد للتجارة والصناعة</option>
+                <option value="شركة أسبريكس لقطع الغيار">شركة أسبريكس لقطع الغيار</option>
+                <option value="شركة البيان الحديث">شركة البيان الحديث</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="clientDocTitle">عنوان أو وصف الملفات:</label>
+            <input type="text" id="clientDocTitle" placeholder="مثال: أوراق التأسيس أو الفحص الضريبي 2026" required>
+        </div>
+
+        <div class="form-group">
+            <label for="clientFiles">اختر الملفات:</label>
+            <input type="file" id="clientFiles" multiple required>
+            <div class="note-text">⚠ تحذير: الملفات العامة مؤمنة ضد الطباعة والنسخ والتصوير.</div>
+        </div>
+
+        <button type="submit" class="btn-action">رفع وحفظ المستندات</button>
+    </form>
+
+    <div class="table-responsive">
+        <table id="clientDocsTable">
+            <thead>
+                <tr>
+                    <th>اسم العميل</th>
+                    <th>نوع الملف</th>
+                    <th>العنوان</th>
+                    <th>الملفات المرفوعة</th>
+                    <th>الصلاحية والظهور</th>
+                    <th>التاريخ</th>
+                    <th>الإجراء</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="7" style="color: #718096; padding: 20px;">لا توجد ملفات مرفوعة حالياً</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a href="admin-docs.html" class="nav-link">شاشة إدارة المستندات العامة</a>
+    <a href="client-register.html" class="nav-link">العودة لشاشة تسجيل العميل</a>
+</div>
+
+<div id="secureViewer" class="secure-modal">
+    <div class="secure-content">
+        <div class="secure-header">
+            <h4>استعراض المستند - مكتب الرواد (للاطلاع فقط)</h4>
+            <span class="close-btn" onclick="closeSecureViewer()">&times;</span>
+        </div>
+        <div class="secure-body">
+            <div class="watermark-overlay">
+                <div>مكتب الرواد للخدمات المحاسبية والضريبية</div>
+                <div>خاص بالعميل - غير مسموح بالتصوير</div>
+            </div>
+            <iframe id="docFrame" class="viewer-frame" src="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    let clientDocs = [];
+
+    // إظهار/إخفاء خانة العميل بناءً على نوع الملف
+    function toggleClientSelection() {
+        const docType = document.getElementById('docType').value;
+        const clientGroup = document.getElementById('clientSelectionGroup');
+        const clientSelect = document.getElementById('selectedClient');
+
+        if (docType === 'أساسي') {
+            clientGroup.style.display = 'block';
+            clientSelect.setAttribute('required', 'required');
+        } else {
+            clientGroup.style.display = 'none';
+            clientSelect.removeAttribute('required');
+        }
+    }
+
+    // منع نسخ النصوص وللتأكد من عدم أخذ لقطة للشاشة
+    document.addEventListener('keydown', function (e) {
+        if (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'c' || e.key === 'u')) {
+            e.preventDefault();
+            alert('تم حظر هذه الخاصية لأغراض أمنية.');
+        }
+    });
+
+    function addClientDocs(event) {
+        event.preventDefault();
+        
+        const docType = document.getElementById('docType').value;
+        let clientName = "جميع العملاء";
+        
+        if (docType === 'أساسي') {
+            clientName = document.getElementById('selectedClient').value;
+        }
+
+        const title = document.getElementById('clientDocTitle').value;
+        const filesInput = document.getElementById('clientFiles');
+        
+        let fileNames = [];
+        for (let i = 0; i < filesInput.files.length; i++) {
+            fileNames.push(filesInput.files[i].name);
+        }
+
+        const newDoc = {
+            client: clientName,
+            type: docType,
+            title: title,
+            files: fileNames.join(', '),
+            date: new Date().toLocaleDateString('ar-EG')
+        };
+
+        clientDocs.push(newDoc);
+        updateClientTable();
+        document.getElementById('clientDocsForm').reset();
+        // إخفاء القائمة بعد الإرسال
+        document.getElementById('clientSelectionGroup').style.display = 'none';
+    }
+
+    function updateClientTable() {
+        const tbody = document.querySelector('#clientDocsTable tbody');
+        tbody.innerHTML = '';
+        
+        if (clientDocs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="color: #718096; padding: 20px;">لا توجد ملفات مرفوعة حالياً</td></tr>`;
+            return;
+        }
+        
+        clientDocs.forEach((doc, index) => {
+            let visibilityBadge = '';
+            let actionBtn = '';
+            
+            if (doc.type === 'أساسي') {
+                visibilityBadge = `<span class="badge-client">خاص بالعميل والمكتب</span>`;
+            } else {
+                visibilityBadge = `<span class="badge-all">مرئي للجميع (للاطلاع فقط)</span>`;
+            }
+            
+            actionBtn = `<button onclick="viewSecureDoc()" style="background:none; border:none; color:var(--accent-color); cursor:pointer; font-weight:bold;">استعراض</button>`;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${doc.client}</strong></td>
+                    <td>${doc.type}</td>
+                    <td>${doc.title}</td>
+                    <td>${doc.files}</td>
+                    <td>${visibilityBadge}</td>
+                    <td>${doc.date}</td>
+                    <td>${actionBtn}</td>
+                </tr>
+            `;
+        });
+    }
+
+    function viewSecureDoc() {
+        document.getElementById('secureViewer').style.display = 'flex';
+    }
+
+    function closeSecureViewer() {
+        document.getElementById('secureViewer').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استيراد يوزرات العملاء - مكتب الرواد</title>
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --bg-color: #f8f9fa;
+            --text-color: #2d3748;
+            --border-color: #cbd5e1;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 10px; border-top: 4px solid var(--primary-color); }
+        h2 { color: var(--primary-color); text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        label { font-weight: 600; display: block; margin-bottom: 8px; }
+        input[type="file"] { border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; width: 100%; }
+        button { background-color: var(--primary-color); color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
+        button:hover { background-color: var(--secondary-color); }
+        .nav-link { display: block; text-align: center; margin-top: 20px; color: var(--secondary-color); text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>استيراد يوزرات العملاء (ملف CSV)</h2>
+    <div class="form-group">
+        <label for="userCsvFile">اختر ملف CSV:</label>
+        <input type="file" id="userCsvFile" accept=".csv">
+    </div>
+    <button onclick="importUsers()">استيراد المستخدمين</button>
+
+    <div style="margin-top: 20px;">
+        <h3>اليوزرات المستوردة:</h3>
+        <ul id="importedUsersList"></ul>
+    </div>
+
+    <a href="admin-dashboard.html" class="nav-link">العودة للوحة التحكم الرئيسية</a>
+</div>
+
+<script>
+    function importUsers() {
+        const fileInput = document.getElementById('userCsvFile');
+        const file = fileInput.files[0];
+        if (!file) { alert('اختر ملفاً أولاً'); return; }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const rows = e.target.result.split('\n');
+            const list = document.getElementById('importedUsersList');
+            list.innerHTML = '';
+            
+            for (let i = 1; i < rows.length; i++) {
+                if (!rows[i].trim()) continue;
+                const cols = rows[i].split(',');
+                const name = cols[0];
+                const email = cols[1];
+                
+                const li = document.createElement('li');
+                li.innerText = `تمت إضافة العميل: ${name} (اسم المستخدم: ${email})`;
+                list.appendChild(li);
+            }
+            alert('تم استيراد المستخدمين بنجاح');
+        };
+        reader.readAsText(file);
+    }
+</script>
+</body>
+</html>

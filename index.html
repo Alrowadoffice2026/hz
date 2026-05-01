@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البوابة الرئيسية - مكتب الرواد</title>
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --bg-color: #f8f9fa;
+            --text-color: #2d3748;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 40px;
+        }
+
+        .cards-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 280px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .card a {
+            display: block;
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: 13px;
+            margin: 10px 0;
+            transition: color 0.2s;
+        }
+
+        .card a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>مكتب الرواد للخدمات المحاسبية والضريبية</h1>
+    <p style="margin-bottom: 40px; color: #4a5568;">الرجاء اختيار الشاشة المطلوبة للعمل عليها:</p>
+
+    <div class="cards-wrapper">
+        
+        <div class="card">
+            <h3>📂 لوحات تحكم المكتب</h3>
+            <a href="admin-dashboard.html">لوحة تحكم المكتب ومراجعة الطلبات</a>
+            <a href="client-followup.html">شاشة متابعة التزامات العملاء</a>
+            <a href="admin-docs.html">إدارة المستندات المؤمنة (العامة)</a>
+        </div>
+
+        <div class="card">
+            <h3>⚙️ عمليات التأسيس والعملاء</h3>
+            <a href="client-register.html">شاشة تسجيل بيانات الشركات الجديدة</a>
+            <a href="client-docs.html">شاشة المستندات الخاصة بالعملاء</a>
+        </div>
+        
+    </div>
+
+</body>
+</html>
