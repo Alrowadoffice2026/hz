@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مكتب الرواد - لوحة الإدارة</title>
+    <title>منصة مكتب الرواد - تسجيل الدخول</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --sidebar-width: 280px;
-            --header-height: 70px;
-            
-            --primary: #1a365d; /* أزرق داكن للمكتب */
-            --primary-dark: #122846;
+            --primary: #1a365d;
             --accent: #3182ce;
             --bg-body: #f1f5f9;
-            --bg-sidebar: #ffffff;
-            --text-sidebar: #4a5568;
+            --bg-card: #ffffff;
             --text-main: #1a202c;
+            --text-muted: #4a5568;
             --border-color: #e2e8f0;
-            --shadow-custom: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --transition: all 0.3s ease;
+            --sidebar-width: 280px;
+            --header-height: 70px;
         }
 
         * {
@@ -31,32 +27,115 @@
             margin: 0;
             padding: 0;
             background-color: var(--bg-body);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
             color: var(--text-main);
+            height: 100vh;
         }
 
-        /* --- شريط التنقل الجانبي (Sidebar) --- */
+        /* --- شاشة تسجيل الدخول --- */
+        #loginScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            color: var(--primary);
+            margin-bottom: 24px;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+            background-color: #f8fafc;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        #loginError {
+            color: #c53030;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* --- لوحة التحكم (مخفية لحين تسجيل الدخول) --- */
+        #appScreen {
+            display: none;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
         .sidebar {
             width: var(--sidebar-width);
-            background-color: var(--bg-sidebar);
+            background-color: #ffffff;
             height: 100%;
             display: flex;
             flex-direction: column;
             border-left: 1px solid var(--border-color);
-            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
             z-index: 100;
         }
 
-        /* لوجو وهيدر Sidebar */
         .sidebar-header {
             height: var(--header-height);
             display: flex;
             align-items: center;
             padding: 0 20px;
             border-bottom: 1px solid var(--border-color);
-            background-color: #ffffff;
         }
 
         .sidebar-header h3 {
@@ -66,7 +145,6 @@
             font-weight: 800;
         }
 
-        /* قائمة الروابط الجانبية */
         .sidebar-menu {
             flex-grow: 1;
             padding: 20px 0;
@@ -93,10 +171,10 @@
             align-items: center;
             padding: 14px 25px;
             text-decoration: none;
-            color: var(--text-sidebar);
+            color: var(--text-muted);
             font-size: 14px;
             font-weight: 600;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             border-right: 4px solid transparent;
         }
 
@@ -105,27 +183,24 @@
             color: var(--primary);
         }
 
-        /* تنسيق الأيقونات الجانبية */
         .menu-icon {
-            margin-left: 15px; /* مسافة على اليسار في RTL */
+            margin-left: 15px;
             font-size: 18px;
             width: 25px;
             text-align: center;
             opacity: 0.7;
         }
 
-        /* الرابط النشط */
         .menu-item a.active {
             background-color: rgba(49, 130, 206, 0.1);
             color: var(--primary);
             border-right-color: var(--accent);
         }
-        
+
         .menu-item a.active .menu-icon {
             opacity: 1;
         }
 
-        /* --- المحتوى الرئيسي وهيدر الصفحة --- */
         .main-wrapper {
             flex-grow: 1;
             display: flex;
@@ -133,7 +208,6 @@
             overflow: hidden;
         }
 
-        /* الهيدر العلوي فوق الـ iframe */
         .top-header {
             height: var(--header-height);
             background-color: #ffffff;
@@ -142,7 +216,6 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 30px;
-            box-shadow: var(--shadow-custom);
             z-index: 90;
         }
 
@@ -152,11 +225,11 @@
             font-size: 18px;
             font-weight: 700;
         }
-        
-        .home-btn {
+
+        .logout-btn {
             background: var(--bg-body);
             border: 1px solid var(--border-color);
-            color: var(--text-sidebar);
+            color: var(--text-muted);
             padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
@@ -164,94 +237,128 @@
             font-weight: 600;
             font-size: 13px;
         }
-        
-        .home-btn:hover {
+
+        .logout-btn:hover {
             background-color: var(--border-color);
             color: var(--text-main);
         }
 
-        /* الإطار الذى يعرض الشاشات */
         .content-iframe {
             flex-grow: 1;
             width: 100%;
             height: calc(100vh - var(--header-height));
             border: none;
-            background-color: var(--bg-body);
+            background-color: #f1f5f9;
         }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h3>مكتب الرواد للخدمات</h3>
-        </div>
-        
-        <div class="sidebar-menu">
-            <div class="menu-title">لوحات الإدارة</div>
-            <ul class="menu-list">
-                <li class="menu-item"><a href="#" class="active" onclick="loadPage(event, 'client-followup.html', 'متابعة التزامات العملاء')">
-                    <span class="menu-icon">📊</span>
-                    متابعة التزامات العملاء
-                </a></li>
-                <li class="menu-item"><a href="#" onclick="loadPage(event, 'admin-docs.html', 'إدارة المستندات')">
-                    <span class="menu-icon">📁</span>
-                    إدارة المستندات المؤمنة
-                </a></li>
-                <li class="menu-item"><a href="#" onclick="loadPage(event, 'admin-dashboard.html', 'لوحة تحكم العملاء')">
-                    <span class="menu-icon">👤</span>
-                    لوحة تحكم العملاء
-                </a></li>
-            </ul>
-
-            <div class="menu-title">التأسيس والتسجيل</div>
-            <ul class="menu-list">
-                <li class="menu-item"><a href="#" onclick="loadPage(event, 'client-register.html', 'تسجيل شركة جديدة')">
-                    <span class="menu-icon">⚙️</span>
-                    تسجيل شركة جديدة
-                </a></li>
-                <li class="menu-item"><a href="#" onclick="loadPage(event, 'client-docs.html', 'بوابة مستندات العميل')">
-                    <span class="menu-icon">👁️</span>
-                    بوابة مستندات العميل
-                </a></li>
-            </ul>
+    <div id="loginScreen">
+        <div class="login-card">
+            <h2>مكتب الرواد للخدمات</h2>
+            <div class="form-group">
+                <label>اسم المستخدم</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور">
+            </div>
+            <button class="login-btn" onclick="checkCredentials()">تسجيل الدخول</button>
+            <div id="loginError">اسم المستخدم أو كلمة المرور غير صحيحة.</div>
         </div>
     </div>
 
-    <div class="main-wrapper">
-        <div class="top-header">
-            <h2 id="pageTitleHeader">متابعة التزامات العملاء</h2>
-            <a href="#" class="home-btn" onclick="returnToHome()">العودة للرئيسية 🏠</a>
+    <div id="appScreen">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>مكتب الرواد للخدمات</h3>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-title">لوحات الإدارة</div>
+                <ul class="menu-list">
+                    <li class="menu-item"><a href="#" class="active" onclick="loadPage(event, 'client-followup.html', 'متابعة التزامات العملاء')">
+                        <span class="menu-icon">📊</span>
+                        متابعة التزامات العملاء
+                    </a></li>
+                    <li class="menu-item"><a href="#" onclick="loadPage(event, 'admin-docs.html', 'إدارة المستندات')">
+                        <span class="menu-icon">📁</span>
+                        إدارة المستندات المؤمنة
+                    </a></li>
+                    <li class="menu-item"><a href="#" onclick="loadPage(event, 'admin-dashboard.html', 'لوحة تحكم العملاء')">
+                        <span class="menu-icon">👤</span>
+                        لوحة تحكم العملاء
+                    </a></li>
+                </ul>
+
+                <div class="menu-title">التأسيس والتسجيل</div>
+                <ul class="menu-list">
+                    <li class="menu-item"><a href="#" onclick="loadPage(event, 'client-register.html', 'تسجيل شركة جديدة')">
+                        <span class="menu-icon">⚙️</span>
+                        تسجيل شركة جديدة
+                    </a></li>
+                    <li class="menu-item"><a href="#" onclick="loadPage(event, 'client-docs.html', 'بوابة مستندات العميل')">
+                        <span class="menu-icon">👁️</span>
+                        بوابة مستندات العميل
+                    </a></li>
+                </ul>
+            </div>
         </div>
-        
-        <iframe id="mainFrame" class="content-iframe" src="client-followup.html"></iframe>
+
+        <div class="main-wrapper">
+            <div class="top-header">
+                <h2 id="pageTitleHeader">متابعة التزامات العملاء</h2>
+                <button class="logout-btn" onclick="logout()">تسجيل الخروج 🔒</button>
+            </div>
+            
+            <iframe id="mainFrame" class="content-iframe" src="client-followup.html"></iframe>
+        </div>
     </div>
 
     <script>
+        // قم بتعيين اسم المستخدم وكلمة المرور كما تريد
+        const validUsername = "admin";
+        const validPassword = "123";
+
+        function checkCredentials() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+
+            if (u === validUsername && p === validPassword) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appScreen').style.display = 'flex';
+                // تفعيل الصفحة الافتراضية
+                loadPage(null, 'client-followup.html', 'متابعة التزامات العملاء');
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
         function loadPage(event, pageName, title) {
             if (event) event.preventDefault();
             
-            // تحديث رابط الصفحة في الـ iframe
             document.getElementById('mainFrame').src = pageName;
-            
-            // تحديث عنوان الهيدر العلوي
             document.getElementById('pageTitleHeader').innerText = title;
             
-            // تحديث حالة 'active' في الـ Sidebar
             const menuLinks = document.querySelectorAll('.menu-item a');
             menuLinks.forEach(link => link.classList.remove('active'));
             
             if (event) {
                 event.currentTarget.classList.add('active');
             } else {
-                // في حالة العودة للرئيسية
                 const defaultLink = document.querySelector(`.menu-item a[onclick*="${pageName}"]`);
                 if (defaultLink) defaultLink.classList.add('active');
             }
         }
-        
-        function returnToHome() {
-            loadPage(null, 'client-followup.html', 'متابعة التزامات العملاء');
+
+        function logout() {
+            document.getElementById('appScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').style.display = 'none';
         }
     </script>
 
